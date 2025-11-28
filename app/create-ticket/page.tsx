@@ -9,21 +9,10 @@ import { jsPDF } from "jspdf";
 import * as QRCodeReact from "qrcode.react";
 import QRCode from "qrcode";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { createTicket, Ticket } from "@/lib/ticketService";
 
 // @ts-ignore
 const QRCodeCanvas = QRCodeReact.QRCodeCanvas || QRCodeReact;
-
-interface Ticket {
-  id: string;
-  eventName: string;
-  participantName: string;
-  date: string;
-  time: string;
-  address: string;
-  qrCode: string;
-  status: "valid" | "used";
-  createdAt: Date;
-}
 
 export default function CreateTicketPage() {
   const { t, language } = useLanguage();
@@ -40,6 +29,7 @@ export default function CreateTicketPage() {
   });
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Effet pour générer le QR Code et convertir en data URL
   useEffect(() => {
@@ -50,7 +40,7 @@ export default function CreateTicketPage() {
         const canvas = document.createElement('canvas');
         
         // Générer le QR code
-        QRCodeModule.toCanvas(canvas, ticket.qrCode, {
+        QRCodeModule.toCanvas(canvas, ticket.qrcode, {
           width: 100,
           margin: 1,
           color: {
@@ -86,32 +76,30 @@ export default function CreateTicketPage() {
     }
   }, [ticket]);
 
-  const generateTicket = (e: React.FormEvent) => {
+  const generateTicket = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsGenerating(true);
+    setError(null);
 
-    setTimeout(() => {
-      // Générer un identifiant unique pour le billet
-      const ticketId = `${formData.participantName.trim().toUpperCase()}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const newTicket: Ticket = {
-        id: ticketId,
-        eventName: formData.eventName,
-        participantName: formData.participantName,
+    try {
+      const newTicket = await createTicket({
+        eventname: formData.eventName,
+        participantname: formData.participantName,
         date: formData.date,
         time: formData.time,
         address: formData.address,
-        qrCode: ticketId,
-        status: "valid",
-        createdAt: new Date(),
-      };
+        qrcode: "" // Nous allons générer cet ID après la création
+      });
 
+      // Mettre à jour le qrcode avec l'ID du billet
+      newTicket.qrcode = newTicket.id;
+      
       setTicket(newTicket);
       setIsGenerating(false);
-
-      const existingTickets = JSON.parse(localStorage.getItem("tickets") || "[]");
-      existingTickets.push(newTicket);
-      localStorage.setItem("tickets", JSON.stringify(existingTickets));
-    }, 600);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la création du billet");
+      setIsGenerating(false);
+    }
   };
 
   // Fonction downloadPDF (Style Classique)
@@ -160,7 +148,7 @@ export default function CreateTicketPage() {
     
     // Nom de l'Événement
     doc.setFontSize(18);
-    doc.text(ticket.eventName.toUpperCase(), 10, 15);
+    doc.text(ticket.eventname.toUpperCase(), 10, 15);
     
     // Statut du billet
     doc.setFontSize(10);
@@ -299,6 +287,12 @@ export default function CreateTicketPage() {
                   <p className="text-sm text-gray-500 font-light">{t("create.ticketDetailsDesc")}</p>
                 </div>
 
+                {error && (
+                  <div className="p-4 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
+                    {error}
+                  </div>
+                )}
+
                 <div className="space-y-6">
                   {/* Event Name */}
                   <div>
@@ -425,7 +419,7 @@ export default function CreateTicketPage() {
                 borderLeft: 'none'
               }}>
                 <h3 className="text-4xl font-extrabold tracking-tight text-center uppercase border-b border-gray-400 pb-3 mb-4">
-                  {ticket.eventName}
+                  {ticket.eventname}
                 </h3>
                 
                 {/* Affichage du statut du billet */}
@@ -491,7 +485,7 @@ export default function CreateTicketPage() {
                   <p className="text-xs font-mono mb-2 text-gray-700">{ticket.id}</p>
                   <div className="w-20 h-20 mx-auto border border-gray-300 p-1 bg-white flex items-center justify-center">
                     <QRCodeCanvas 
-                      value={ticket.qrCode} 
+                      value={ticket.qrcode} 
                       size={80}
                       bgColor="#f9f6e5"
                       fgColor="#3d3b37"

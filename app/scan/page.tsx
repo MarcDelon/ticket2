@@ -5,6 +5,7 @@ import { ArrowLeft, Loader } from "lucide-react"
 import Link from "next/link"
 import jsQR from "jsqr"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { getTicketById, updateTicketStatus, Ticket } from "@/lib/ticketService"
 
 export default function ScanPage() {
   const { t } = useLanguage()
@@ -17,6 +18,7 @@ export default function ScanPage() {
     ticketId?: string
   } | null>(null)
   const [isCameraReady, setIsCameraReady] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     startCamera()
@@ -69,37 +71,38 @@ export default function ScanPage() {
     }
   }
 
-  const processTicket = (ticketId: string) => {
-    const tickets = JSON.parse(localStorage.getItem("tickets") || "[]")
-    let scannedTickets = JSON.parse(localStorage.getItem("scannedTickets") || "[]")
-    
-    const ticket = tickets.find((t: any) => t.id === ticketId)
+  const processTicket = async (ticketId: string) => {
+    try {
+      // Récupérer le billet depuis la base de données
+      const ticket = await getTicketById(ticketId)
+      
+      if (!ticket) {
+        setResult({ type: "error", message: t("scan.invalid") })
+        return
+      }
 
-    if (!ticket) {
-      setResult({ type: "error", message: t("scan.invalid") })
-      return
-    }
+      // Vérifier si le billet a déjà été utilisé
+      if (ticket.status === "used") {
+        setResult({ 
+          type: "used", 
+          message: t("scan.alreadyUsed"),
+          ticketId 
+        })
+        return
+      }
 
-    // Vérifier si le billet a déjà été scanné
-    if (scannedTickets.includes(ticketId)) {
-      // Marquer le billet comme inutilisable
-      setResult({ 
-        type: "used", 
-        message: t("scan.alreadyUsed"),
-        ticketId 
+      // Marquer le billet comme utilisé
+      await updateTicketStatus(ticketId, "used")
+      
+      setResult({
+        type: "success",
+        message: t("scan.welcome").replace("{name}", ticket.participantname),
+        ticketId,
       })
-      return
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors du traitement du billet")
+      setResult({ type: "error", message: t("scan.invalid") })
     }
-
-    // Premier scan - marquer le billet comme utilisé
-    scannedTickets.push(ticketId)
-    localStorage.setItem("scannedTickets", JSON.stringify(scannedTickets))
-
-    setResult({
-      type: "success",
-      message: t("scan.welcome").replace("{name}", ticket.participantName),
-      ticketId,
-    })
   }
 
   const resetScan = () => {
@@ -127,6 +130,13 @@ export default function ScanPage() {
       </header>
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {/* Error Message */}
+        {error && (
+          <div className="p-4 rounded bg-red-50 border border-red-200 text-red-700 text-sm mb-4">
+            {error}
+          </div>
+        )}
+
         <div
           className="relative rounded overflow-hidden border-2 border-blue-600 bg-black mb-6 w-full"
           style={{ aspectRatio: "16 / 9" }}
