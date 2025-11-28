@@ -1,0 +1,4 @@
+[00:00:02.484] Server  WARN     ⚠ Minimum recommended TypeScript version is v5.1.0, older versions can potentially be incompatible with Next.js. Detected: 5.0.2
+[00:00:02.996] Server  LOG      ✓ Ready in 2s
+[00:00:06.125] Server  LOG      ○ Compiling / ...
+[00:00:12.741] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
