@@ -1,107 +1,149 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import Link from "next/link"
-import { QrCode, Ticket, BarChart3, Shield } from "lucide-react"
+import { QrCode, Ticket, BarChart3, Shield, Menu, X } from "lucide-react"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { LanguageSelector } from "@/components/LanguageSelector"
-
-interface Event {
-  id: string
-  name: string
-  date: string
-  location: string
-  description: string
-  ticketsGenerated: number
-}
+import { useState } from "react"
 
 export default function Home() {
   const { t } = useLanguage()
-  const [events, setEvents] = useState<Event[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const existingEvents = localStorage.getItem("events")
-    if (existingEvents) {
-      setEvents(JSON.parse(existingEvents))
-    }
-    setIsLoading(false)
-  }, [])
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 relative">
+      {/* Fond décoratif animé */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-indigo-400/10 to-pink-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1s" }}></div>
+      </div>
+
       {/* Navigation */}
-      <nav className="border-b border-gray-200 bg-white sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <div className="w-8 sm:w-10 h-8 sm:h-10 rounded bg-blue-600 flex items-center justify-center flex-shrink-0">
-              <Ticket className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
+      <nav className="relative border-b border-gray-200/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-110 transition-transform duration-300">
+                <Ticket className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent tracking-tight truncate">
+                EventPass
+              </span>
             </div>
-            <span className="text-base sm:text-xl font-light text-gray-900 tracking-tight truncate">EventPass</span>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            <LanguageSelector />
-            <Link
-              href="/create-ticket"
-              className="px-3 sm:px-6 py-2 sm:py-2.5 rounded text-white bg-blue-600 hover:bg-blue-700 font-medium transition-colors text-xs sm:text-base whitespace-nowrap"
-            >
-              {t("home.createTicket")}
-            </Link>
-            <Link
-              href="/admin"
-              className="px-3 sm:px-6 py-2 sm:py-2.5 rounded border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium transition-colors text-xs sm:text-base whitespace-nowrap"
-            >
-              {t("home.admin")}
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16 lg:py-24">
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-12 lg:gap-16 items-center">
-          <div className="order-2 lg:order-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div className="p-4 sm:p-6 rounded border border-gray-200 hover:border-gray-300 transition-colors bg-gray-50">
-                <QrCode className="w-5 sm:w-6 h-5 sm:h-6 text-blue-600 mb-3" />
-                <h3 className="text-gray-900 font-medium mb-1 text-xs sm:text-sm">{t("home.createTicket")}</h3>
-                <p className="text-gray-600 text-xs font-light">{t("home.description")}</p>
-              </div>
-              <div className="p-4 sm:p-6 rounded border border-gray-200 hover:border-gray-300 transition-colors bg-gray-50">
-                <Shield className="w-5 sm:w-6 h-5 sm:h-6 text-blue-600 mb-3" />
-                <h3 className="text-gray-900 font-medium mb-1 text-xs sm:text-sm">{t("ticket.used")}</h3>
-                <p className="text-gray-600 text-xs font-light">{t("scan.oneEntry")}</p>
-              </div>
-              <div className="p-4 sm:p-6 rounded border border-gray-200 hover:border-gray-300 transition-colors bg-gray-50">
-                <Ticket className="w-5 sm:w-6 h-5 sm:h-6 text-blue-600 mb-3" />
-                <h3 className="text-gray-900 font-medium mb-1 text-xs sm:text-sm">PDF {t("actions.download")}</h3>
-                <p className="text-gray-600 text-xs font-light">{t("create.preview")}</p>
-              </div>
-              <div className="p-4 sm:p-6 rounded border border-gray-200 hover:border-gray-300 transition-colors bg-gray-50">
-                <BarChart3 className="w-5 sm:w-6 h-5 sm:h-6 text-blue-600 mb-3" />
-                <h3 className="text-gray-900 font-medium mb-1 text-xs sm:text-sm">{t("admin.title")}</h3>
-                <p className="text-gray-600 text-xs font-light">{t("scan.permanentlyInvalid")}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="order-1 lg:order-2">
-            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-light text-gray-900 mb-4 sm:mb-6 leading-tight tracking-tight">
-              {t("home.title")}
-            </h1>
-            <p className="text-sm sm:text-base lg:text-lg text-gray-600 mb-6 sm:mb-8 font-light leading-relaxed">
-              {t("home.description")}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            
+            {/* Desktop Menu */}
+            <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
+              <LanguageSelector />
               <Link
                 href="/create-ticket"
-                className="px-6 py-3 sm:py-4 rounded text-white bg-blue-600 hover:bg-blue-700 font-medium transition-all text-center text-sm sm:text-base"
+                className="px-4 py-2.5 rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 font-semibold transition-all text-xs whitespace-nowrap shadow-lg hover:shadow-xl hover:scale-105 duration-300"
               >
                 {t("home.createTicket")}
               </Link>
               <Link
+                href="/login"
+                className="px-4 py-2.5 rounded-xl border-2 border-gray-300 hover:border-indigo-600 hover:bg-indigo-50 text-gray-700 hover:text-indigo-700 font-semibold transition-all text-xs whitespace-nowrap hover:scale-105 duration-300"
+              >
+                {t("home.admin")}
+              </Link>
+            </div>
+            
+            {/* Mobile Menu Button */}
+            <div className="flex sm:hidden items-center gap-2">
+              <LanguageSelector />
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
+          </div>
+          
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="sm:hidden mt-4 pb-2 space-y-2 border-t border-gray-200 pt-4 animate-fade-in-scale">
+              <Link
+                href="/create-ticket"
+                className="block px-4 py-3 text-center rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t("home.createTicket")}
+              </Link>
+              <Link
+                href="/login"
+                className="block px-4 py-3 text-center rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:border-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-all"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t("home.admin")}
+              </Link>
+            </div>
+          )}
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16 lg:py-24">
+        <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
+          <div className="order-2 md:order-1 animate-slide-up">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="group p-5 sm:p-6 rounded-2xl border-2 border-gray-200/50 hover:border-indigo-300 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-luxury hover:shadow-luxury-lg hover:-translate-y-1">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <QrCode className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-gray-900 font-bold mb-1.5 text-sm">{t("home.createTicket")}</h3>
+                <p className="text-gray-600 text-xs leading-relaxed">{t("home.description")}</p>
+              </div>
+              <div className="group p-5 sm:p-6 rounded-2xl border-2 border-gray-200/50 hover:border-emerald-300 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-luxury hover:shadow-luxury-lg hover:-translate-y-1">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-gray-900 font-bold mb-1.5 text-sm">{t("ticket.used")}</h3>
+                <p className="text-gray-600 text-xs leading-relaxed">{t("scan.oneEntry")}</p>
+              </div>
+              <div className="group p-5 sm:p-6 rounded-2xl border-2 border-gray-200/50 hover:border-blue-300 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-luxury hover:shadow-luxury-lg hover:-translate-y-1">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <Ticket className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-gray-900 font-bold mb-1.5 text-sm">PDF {t("actions.download")}</h3>
+                <p className="text-gray-600 text-xs leading-relaxed">{t("create.preview")}</p>
+              </div>
+              <div className="group p-5 sm:p-6 rounded-2xl border-2 border-gray-200/50 hover:border-amber-300 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-luxury hover:shadow-luxury-lg hover:-translate-y-1">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <BarChart3 className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-gray-900 font-bold mb-1.5 text-sm">{t("admin.title")}</h3>
+                <p className="text-gray-600 text-xs leading-relaxed">{t("scan.permanentlyInvalid")}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="order-1 md:order-2 animate-slide-up">
+            <div className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 text-xs font-semibold mb-6 animate-shimmer">
+              ✨ Premium Ticketing Solution
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight tracking-tight">
+              <span className="block">{t("home.title")}</span>
+              <span className="block text-gradient mt-2">Reimagined</span>
+            </h1>
+            <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">
+              {t("home.description")}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                href="/create-ticket"
+                className="group relative px-8 py-4 rounded-2xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 font-bold transition-all text-center text-sm shadow-luxury-lg hover:shadow-2xl hover:scale-105 duration-300 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <span className="relative flex items-center justify-center gap-2">
+                  <QrCode className="w-5 h-5" />
+                  {t("home.createTicket")}
+                </span>
+              </Link>
+              <Link
                 href="/scan"
-                className="px-6 py-3 sm:py-4 rounded border border-gray-300 hover:bg-gray-50 text-gray-900 font-medium transition-colors text-center text-sm sm:text-base"
+                className="px-8 py-4 rounded-2xl border-2 border-gray-300 hover:border-indigo-600 bg-white hover:bg-indigo-50 text-gray-900 hover:text-indigo-700 font-bold transition-all text-center text-sm hover:scale-105 duration-300 shadow-lg"
               >
                 {t("home.scanTicket")}
               </Link>
@@ -110,58 +152,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Events Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-20 border-t border-gray-200">
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light text-gray-900 mb-6 sm:mb-8 lg:mb-12 tracking-tight">
-          {t("home.title")}
-        </h2>
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-600 border-r-transparent"></div>
-          </div>
-        ) : events.length === 0 ? (
-          <div className="p-6 sm:p-8 lg:p-12 rounded border border-gray-200 bg-gray-50 text-center">
-            <Ticket className="w-10 sm:w-12 h-10 sm:h-12 text-gray-400 mx-auto mb-3" />
-            <h3 className="text-base sm:text-lg font-light text-gray-900 mb-2">{t("admin.noTickets")}</h3>
-            <p className="text-gray-600 text-xs sm:text-sm font-light mb-4 sm:mb-6">
-              {t("create.preview")}
-            </p>
-            <Link
-              href="/create-ticket"
-              className="inline-block px-6 py-2.5 rounded bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors text-sm"
-            >
-              {t("home.createTicket")}
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {events.map((event) => (
-              <div
-                key={event.id}
-                className="group p-5 sm:p-6 rounded border border-gray-200 hover:border-gray-300 transition-all bg-white"
-              >
-                <div className="flex items-start justify-between mb-3 gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">
-                      {event.name}
-                    </h3>
-                    <p className="text-xs text-gray-500 font-light">{event.date}</p>
-                  </div>
-                  <Ticket className="w-4 h-4 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-1" />
-                </div>
-                <p className="text-gray-600 text-xs sm:text-sm font-light mb-3 line-clamp-2">{event.description}</p>
-                <p className="text-xs text-gray-500 mb-4 font-light">📍 {event.location}</p>
-                <Link
-                  href={`/create-ticket?event=${event.id}`}
-                  className="inline-block w-full text-center py-2 sm:py-2.5 rounded border border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition-all text-xs sm:text-sm"
-                >
-                  {t("home.createTicket")}
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+
     </main>
   )
 }
