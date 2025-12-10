@@ -469,6 +469,7 @@ export default function CreateTicketPage() {
             </div>
 
             {/* Nouveau Composant Premium Ticket */}
+<<<<<<< HEAD
             <BilletAcces ticket={ticket} qrDataUrl={qrDataUrl} />
 
             {/* Actions Premium */}
@@ -492,6 +493,25 @@ export default function CreateTicketPage() {
               >
                 <Share2 className="w-5 h-5" />
                 Copier le lien
+=======
+            <PremiumTicket ticket={ticket} qrDataUrl={qrDataUrl} />
+
+            {/* Actions Premium */}
+            <div className="mt-10 max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button
+                onClick={downloadPDF}
+                className="group relative px-8 py-4 rounded-2xl text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 font-bold transition-all text-sm shadow-luxury-lg hover:shadow-2xl hover:scale-105 duration-300 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <span className="relative flex items-center justify-center gap-2">
+                  <Download className="w-5 h-5" />
+                  {t("actions.download")}
+                </span>
+              </button>
+              <button className="px-8 py-4 rounded-2xl border-2 border-gray-300 hover:border-amber-600 bg-white hover:bg-amber-50 text-gray-900 hover:text-amber-700 font-bold transition-all text-sm hover:scale-105 duration-300 shadow-lg flex items-center justify-center gap-2">
+                <Share2 className="w-5 h-5" />
+                {t("actions.share")}
+>>>>>>> cf99a49dc5f009aa3b5eeea3f48c88b6f262774f
               </button>
             </div>
             
@@ -518,6 +538,7 @@ export default function CreateTicketPage() {
       </div>
     </main>
   );
+<<<<<<< HEAD
 }
 
 interface BilletAccesProps {
@@ -800,3 +821,6 @@ export function BilletAcces({ ticket, qrDataUrl }: BilletAccesProps) {
     </div>
   );
 }
+=======
+}
+>>>>>>> cf99a49dc5f009aa3b5eeea3f48c88b6f262774f
