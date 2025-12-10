@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billet d'Accès Gala</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="access-ticket">
+        
+        <div class="info-section">
+            <h2 class="ticket-header">BILLET D'ACCÈS</h2>
+            <h1 class="event-title">SOIRÉE DE GALA 2027</h1>
+            
+            <div class="ticket-details">
+                <div class="detail-item">
+                    <span class="label">INVITÉ(E)</span>
+                    <p class="value">Mme/M. [Nom et Prénom]</p>
+                </div>
+                <div class="detail-item">
+                    <span class="label">DATE & HEURE</span>
+                    <p class="value">14 FÉVRIER - 20:00</p>
+                </div>
+                <div class="detail-item">
+                    <span class="label">LIEU</span>
+                    <p class="value">Grand Palais, Salon d'Honneur</p>
+                </div>
+            </div>
+            
+            <p class="instructions">
+                Présentez ce billet (papier ou mobile) à l'entrée.
+            </p>
+        </div>
+
+        <div class="perforation-line"></div>
+
+        <div class="scan-section">
+            <div class="qr-container">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://votre-site.com/code-unique-billet-12345" alt="Code QR d'accès" class="qr-code-img">
+            </div>
+            
+            <p class="ticket-number">N° Billet : **GALA-12345**</p>
+            <p class="section-label">Scan à l'entrée</p>
+        </div>
+
+    </div>
+</body>
+</html>

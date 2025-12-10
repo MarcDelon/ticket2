@@ -1,0 +1,222 @@
+/* Importation de polices */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;700&display=swap');
+
+/* Définition des couleurs chics */
+:root {
+    --color-dark: #1a1a1a;
+    --color-gold: #c5a47e;
+    --color-light: #f5f5f5;
+    --color-accent: #e6e6e6; 
+}
+
+/* Base et fond */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--color-dark);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Aligner en haut pour le défilement mobile */
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px 0; /* Ajout d'un peu de marge verticale */
+    box-sizing: border-box;
+}
+
+/* Conteneur principal du billet (Optimisation Mobile par défaut) */
+.access-ticket {
+    display: flex;
+    flex-direction: column; /* Empilement vertical par défaut (Mobile First) */
+    width: 95%; /* Prend presque toute la largeur du téléphone */
+    max-width: 400px; /* Taille maximale pour simuler un écran mobile */
+    background-color: var(--color-accent);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden; 
+    color: var(--color-dark);
+    position: relative;
+}
+
+/* ------------------- SECTION DU CODE QR (Mise en avant) ------------------- */
+.scan-section {
+    order: -1; /* Place la section de scan en haut sur mobile */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--color-dark); /* Fond sombre pour le contraste maximal */
+    color: var(--color-light);
+}
+
+.qr-container {
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    border: 4px solid var(--color-gold);
+    box-shadow: 0 0 20px rgba(197, 164, 126, 0.6); /* Ombre plus visible */
+}
+
+.qr-code-img {
+    width: 200px; /* TAILLE DU QR CODE AUGMENTÉE POUR UN SCAN FACILE SUR MOBILE */
+    height: 200px;
+    display: block;
+}
+
+.ticket-number {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--color-gold);
+    letter-spacing: 2px;
+    margin: 10px 0 5px;
+}
+
+.section-label {
+    font-size: 0.8em;
+    text-transform: uppercase;
+    color: #888;
+    margin: 0;
+}
+
+/* ------------------- LIGNE DE SÉPARATION (Perforation) ------------------- */
+.perforation-line {
+    height: 15px; /* Devient horizontal */
+    width: 100%;
+    position: relative;
+    background-color: #fff; 
+    border-top: 2px dashed #ccc;
+    z-index: 10;
+}
+
+/* Effet de perforation (demi-cercles) */
+.perforation-line::before,
+.perforation-line::after {
+    content: '';
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    background-color: var(--color-dark); /* Fait correspondre la couleur au body/fond */
+    border-radius: 50%;
+    left: 10%; /* Décalage pour le look */
+    z-index: 20;
+}
+
+.perforation-line::after {
+    left: auto;
+    right: 10%;
+}
+
+
+/* ------------------- SECTION INFOS ------------------- */
+.info-section {
+    padding: 30px 20px;
+    text-align: center; /* Centrer le texte sur mobile pour plus de clarté */
+    background-color: #fff; 
+}
+
+.ticket-header {
+    font-size: 0.9em;
+    color: var(--color-gold);
+    letter-spacing: 4px; /* Plus d'espacement */
+}
+
+.event-title {
+    font-size: 2em;
+    margin-bottom: 25px;
+}
+
+.ticket-details {
+    flex-direction: column; /* Empile les détails */
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.detail-item {
+    min-width: 100%;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #eee;
+}
+
+.label {
+    font-size: 0.8em;
+}
+
+.value {
+    font-size: 1.2em;
+}
+
+.instructions {
+    border-top: none;
+    padding-top: 0;
+    font-size: 0.8em;
+    font-style: italic;
+    color: #888;
+}
+
+/* ------------------- MEDIA QUERY : Version Ordinateur (Optionnel) ------------------- */
+
+@media (min-width: 700px) {
+    body {
+        align-items: center; /* Recentrer sur grand écran */
+        padding: 0;
+    }
+    .access-ticket {
+        flex-direction: row; /* Repasse en côte-à-côte */
+        max-width: 800px; /* Reprend la largeur horizontale */
+        width: 90%;
+    }
+
+    .info-section {
+        flex-grow: 1;
+        text-align: left; /* Réaligne le texte à gauche */
+        padding: 30px 40px;
+    }
+    
+    .ticket-details {
+        flex-direction: row; /* Repasse en ligne */
+        flex-wrap: wrap;
+        text-align: left;
+    }
+
+    .detail-item {
+        min-width: 45%; 
+        text-align: left;
+        border-bottom: none;
+    }
+
+    .scan-section {
+        order: initial; /* Retour à l'ordre normal (à droite) */
+        width: 250px; /* Largeur fixe à droite */
+        min-height: 400px;
+        justify-content: space-around; /* Mieux réparti */
+        padding: 40px 20px;
+    }
+
+    .qr-code-img {
+        width: 150px; /* Réduit un peu la taille sur desktop */
+        height: 150px;
+    }
+
+    /* Ligne de perforation verticale */
+    .perforation-line {
+        width: 15px; 
+        height: auto;
+        border-left: 2px dashed #ccc;
+        border-top: none; 
+    }
+
+    .perforation-line::before,
+    .perforation-line::after {
+        left: -17px;
+        top: -15px;
+        transform: none;
+    }
+
+    .perforation-line::after {
+        top: auto;
+        bottom: -15px;
+        left: -17px;
+        right: auto;
+    }
+}
