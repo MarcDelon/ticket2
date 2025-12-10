@@ -15,7 +15,6 @@ export interface Ticket {
 
 // Créer un nouveau billet
 export async function createTicket(ticketData: Omit<Ticket, 'id' | 'createdat' | 'status' | 'deleted'>) {
-<<<<<<< HEAD
   // Générer un ID aléatoire sécurisé
   const randomId = crypto.randomUUID ? crypto.randomUUID() : 
     'ticket-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
@@ -23,11 +22,6 @@ export async function createTicket(ticketData: Omit<Ticket, 'id' | 'createdat' |
   const newTicket = {
     ...ticketData,
     id: randomId,
-=======
-  const newTicket = {
-    ...ticketData,
-    id: `${ticketData.participantname.trim().toUpperCase()}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
->>>>>>> cf99a49dc5f009aa3b5eeea3f48c88b6f262774f
     status: 'valid' as const,
     createdat: new Date().toISOString(),
     deleted: false
