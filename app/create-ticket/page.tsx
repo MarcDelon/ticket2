@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ArrowLeft, Download, Share2, Check, Sparkles, Calendar, Clock, MapPin, User } from "lucide-react";
+import { ArrowLeft, Download, Share2, Check, Sparkles, Calendar, Clock, MapPin, User, Delete } from "lucide-react";
 import Link from "next/link";
 import { jsPDF } from "jspdf";
 import QRCode from "qrcode";
@@ -64,81 +64,119 @@ export default function CreateTicketPage() {
   // Afficher le formulaire d'authentification si l'utilisateur n'est pas authentifié
   if (showAuthForm && !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50 flex items-center justify-center p-4">
+      <main className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-            <div className="text-center mb-8">
-              <div className="mx-auto bg-amber-100 rounded-full p-3 w-16 h-16 flex items-center justify-center mb-4">
-                <Sparkles className="w-8 h-8 text-amber-600" />
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Accès administrateur</h1>
-              <p className="text-gray-600">Entrez le code d'accès pour créer des billets</p>
-            </div>
-
-            <form onSubmit={handleAuth} className="space-y-6">
-              <div>
-                <label htmlFor="authCode" className="block text-sm font-medium text-gray-700 mb-2">
-                  Code d'accès
-                </label>
-                <input
-                  type="password"
-                  id="authCode"
-                  value={authCode}
-                  onChange={(e) => setAuthCode(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
-                  placeholder="Entrez le code d'accès"
-                  required
-                />
-                {authError && (
-                  <p className="mt-2 text-sm text-red-600">{authError}</p>
-                )}
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium py-3 px-4 rounded-lg transition-all transform hover:scale-105 duration-200"
-              >
-                Accéder
-              </button>
-            </form>
-
-            <div className="mt-6 text-center">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-amber-600 to-orange-700 p-6 text-center relative">
               <Link 
-                href="/"
-                className="text-amber-600 hover:text-amber-700 font-medium text-sm flex items-center justify-center"
+                href="/" 
+                className="absolute left-4 top-4 p-2 rounded-full hover:bg-white/10 transition-colors"
               >
-                <ArrowLeft className="w-4 h-4 mr-1" />
-                Retour à l'accueil
+                <ArrowLeft className="w-5 h-5 text-white" />
               </Link>
+              <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-xl font-light text-white tracking-tight">Accès administrateur</h1>
+              <p className="text-amber-100 text-sm mt-1">Entrez le code d'accès pour créer des billets</p>
+            </div>
+            
+            {/* Body */}
+            <div className="p-6">
+              <form onSubmit={handleAuth}>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-900 mb-4 text-center">
+                    Code d'accès
+                  </label>
+                  
+                  <div className="flex justify-center gap-3 mb-6">
+                    <input
+                      type="password"
+                      value={authCode}
+                      onChange={(e) => setAuthCode(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-center text-lg font-bold"
+                      placeholder="Entrez le code d'accès"
+                      required
+                    />
+                  </div>
+                  
+                  {/* Clavier numérique */}
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
+                      <button
+                        key={number}
+                        type="button"
+                        onClick={() => setAuthCode(prev => prev + number.toString())}
+                        className="h-14 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xl transition-colors flex items-center justify-center"
+                      >
+                        {number}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setAuthCode(prev => prev.slice(0, -1))}
+                      className="h-14 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold transition-colors flex items-center justify-center"
+                    >
+                      <Delete className="w-6 h-6" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAuthCode(prev => prev + "0")}
+                      className="h-14 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xl transition-colors flex items-center justify-center"
+                    >
+                      0
+                    </button>
+                  </div>
+                </div>
+                
+                {authError && (
+                  <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm text-center">
+                    {authError}
+                  </div>
+                )}
+                
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 duration-200"
+                >
+                  Accéder
+                </button>
+              </form>
             </div>
           </div>
         </div>
-      </div>
+      </main>
     );
   }
 
   // Effet pour générer le QR Code et convertir en data URL
   useEffect(() => {
     if (ticket && typeof window !== 'undefined') {
-      // Créer un canvas temporaire pour générer le QR code
-      const canvas = document.createElement('canvas');
-      
-      // Générer le QR code
-      QRCode.toCanvas(canvas, ticket.qrcode, {
-        width: 200,
-        margin: 1,
-        color: {
-          dark: '#3d3b37',
-          light: '#f9f6e5'
-        }
-      }, (error: Error | null | undefined) => {
-        if (error) {
-          console.error('Erreur lors de la génération du QR Code:', error);
-        } else {
-          // Convertir en data URL
-          const dataUrl = canvas.toDataURL('image/png');
-          setQrDataUrl(dataUrl);
-        }
+      // Importer QRCode de manière dynamique
+      import('qrcode').then((QRCode) => {
+        // Créer un canvas temporaire pour générer le QR code
+        const canvas = document.createElement('canvas');
+        
+        // Générer le QR code
+        QRCode.default.toCanvas(canvas, ticket.qrcode, {
+          width: 200,
+          margin: 1,
+          color: {
+            dark: '#3d3b37',
+            light: '#f9f6e5'
+          }
+        }, (error: Error | null | undefined) => {
+          if (error) {
+            console.error('Erreur lors de la génération du QR Code:', error);
+          } else {
+            // Convertir en data URL
+            const dataUrl = canvas.toDataURL('image/png');
+            setQrDataUrl(dataUrl);
+          }
+        });
+      }).catch((error) => {
+        console.error('Erreur lors du chargement de la bibliothèque QRCode:', error);
       });
     }
   }, [ticket]);
@@ -762,7 +800,7 @@ export function BilletAcces({ ticket, qrDataUrl }: BilletAccesProps) {
           /* ------------------- MEDIA QUERY : Version Ordinateur (Optionnel) ------------------- */
           @media (min-width: 700px) {
             .access-ticket {
-              flex-direction: row; /* Repasse en côte-à-côte */
+              flex-direction: row; /* Repasse en côte-à-côté */
               max-width: 800px; /* Reprend la largeur horizontale */
               width: 90%;
             }
