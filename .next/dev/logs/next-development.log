@@ -1,7 +1,50 @@
-[00:00:05.042] Server  LOG      ✓ Ready in 3.2s
-[00:00:10.761] Server  LOG      ○ Compiling / ...
-[00:00:16.030] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:18:23.237] Server  LOG        Reload env: .env.local
-[01:18:26.278] Server  LOG      ✓ Compiled in 3s
-[01:32:20.685] Server  LOG      ✓ Compiled in 102ms
-[00:30:07.544] Server  LOG      ✓ Compiled in 638ms
+[00:00:04.079] Server  WARN     ⚠ Minimum recommended TypeScript version is v5.1.0, older versions can potentially be incompatible with Next.js. Detected: 5.0.2
+[00:00:04.791] Server  LOG      ✓ Ready in 3.2s
+[00:00:10.495] Server  LOG      ○ Compiling / ...
+[00:00:16.719] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:09:20.001] Server  LOG      ○ Compiling /create-ticket ...
+[00:09:42.533] Browser ERROR   React has detected a change in the order of Hooks called by %s. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
+
+   Previous render            Next render
+   ------------------------------------------------------
+%s   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ CreateTicketPage 1. useContext                 useContext
+2. useRef                     useRef
+3. useState                   useState
+4. useRef                     useRef
+5. useState                   useState
+6. useState                   useState
+7. useState                   useState
+8. useState                   useState
+9. useState                   useState
+10. useState                  useState
+11. useState                  useState
+12. useState                  useState
+13. useEffect                 useEffect
+14. undefined                 useEffect
+
+[00:09:42.533] Browser ERROR   uncaughtError: Error: Rendered more hooks than during the previous render.
+[00:10:39.828] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:10:39.852] Server  LOG      ✓ Compiled in 360ms
+[00:10:41.259] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:10:41.513] Browser ERROR   React has detected a change in the order of Hooks called by %s. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
+
+   Previous render            Next render
+   ------------------------------------------------------
+%s   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ CreateTicketPage 1. useContext                 useContext
+2. useRef                     useRef
+3. useState                   useState
+4. useRef                     useRef
+5. useState                   useState
+6. useState                   useState
+7. useState                   useState
+8. useState                   useState
+9. useState                   useState
+10. useState                  useState
+11. useState                  useState
+12. useState                  useState
+13. useEffect                 useEffect
+14. undefined                 useEffect
+
+[00:10:41.513] Browser ERROR   uncaughtError: Error: Rendered more hooks than during the previous render.

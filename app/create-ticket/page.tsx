@@ -31,7 +31,7 @@ export default function CreateTicketPage() {
   const [authCode, setAuthCode] = useState("");
   const [authError, setAuthError] = useState("");
   const [showAuthForm, setShowAuthForm] = useState(true);
-
+  
   // Vérifier l'authentification au chargement
   useEffect(() => {
     const authStatus = localStorage.getItem("createTicketAuth");
@@ -180,6 +180,15 @@ export default function CreateTicketPage() {
       });
     }
   }, [ticket]);
+  
+  // Effet pour vérifier l'authentification - doit toujours être présent
+  useEffect(() => {
+    const authStatus = localStorage.getItem("createTicketAuth");
+    if (authStatus === "true") {
+      setIsAuthenticated(true);
+      setShowAuthForm(false);
+    }
+  }, []);
 
   const generateTicket = async (e: React.FormEvent) => {
     e.preventDefault();
