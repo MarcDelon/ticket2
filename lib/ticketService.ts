@@ -27,10 +27,14 @@ export async function createTicket(ticketData: Omit<Ticket, 'id' | 'createdat' |
     deleted: false // S'assurer que le billet n'est pas marqué comme supprimé
   }
 
+  console.log("Création d'un billet avec ID:", randomId);
+  
   const { data, error } = await supabase
     .from('tickets')
     .insert(newTicket)
     .select()
+
+  console.log("Résultat de la création:", { data, error });
 
   if (error) {
     throw new Error(error.message)
