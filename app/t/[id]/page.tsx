@@ -208,7 +208,7 @@ function BilletAcces({ ticket, qrDataUrl }: { ticket: Ticket; qrDataUrl: string 
 
         <div className="info-section">
           <p className="info-label">Participant</p>
-          <p className="info-value">{ticket.username}</p>
+          <p className="info-value">{ticket.participantname}</p>
         </div>
 
         <div className="info-section">
@@ -223,7 +223,7 @@ function BilletAcces({ ticket, qrDataUrl }: { ticket: Ticket; qrDataUrl: string 
 
         <div className="info-section">
           <p className="info-label">Lieu</p>
-          <p className="info-value">{ticket.place}</p>
+          <p className="info-value">{ticket.address}</p>
         </div>
 
         {/* QR Code */}
