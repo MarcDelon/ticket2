@@ -28,3 +28,7 @@
 [00:06:17.410] Server  LOG      ✓ Compiled in 113ms
 [02:33:46.045] Server  LOG      ✓ Compiled in 477ms
 [02:36:08.937] Server  LOG      ✓ Compiled in 342ms
+[05:09:10.956] Browser LOG     Création d'un billet avec ID: aebffb2f-0d42-4223-b40b-aba552e6dfab
+[05:09:14.588] Browser LOG     Résultat de la création: {"data":[{"address":"douala","createdat":"2025-12-11T11:59:27.534+00:00","date":"2025-12-11","deleted":false,"eventname":"parrainage","id":"aebffb2f-0d42-4223-b40b-aba552e6dfab","participantname":"mbenda","qrcode":"","status":"valid","time":"19:00:00"}],"error":null}
+[05:37:01.826] Server  LOG      ✓ Compiled in 304ms
+[05:37:26.724] Server  LOG      ✓ Compiled in 191ms

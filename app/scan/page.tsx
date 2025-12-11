@@ -245,6 +245,10 @@ export default function ScanPage() {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
           <Link
             href="/"
+            onClick={() => {
+              // Déconnecter l'utilisateur lorsqu'il clique sur la flèche de retour
+              localStorage.removeItem("scanAuth");
+            }}
             className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg px-3 py-2 transition-all font-medium text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
