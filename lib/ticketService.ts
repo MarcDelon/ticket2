@@ -130,6 +130,8 @@ export async function permanentlyDeleteTicket(ticketId: string) {
 
 // Obtenir un billet par son ID
 export async function getTicketById(ticketId: string) {
+  console.log("Recherche du billet avec ID:", ticketId);
+  
   const { data, error } = await supabase
     .from('tickets')
     .select('*')
@@ -137,6 +139,8 @@ export async function getTicketById(ticketId: string) {
     .eq('deleted', false) // Ne retourner que les billets non supprimés
     .single()
 
+  console.log("Résultat de la recherche:", { data, error });
+  
   if (error) {
     throw new Error(error.message)
   }

@@ -301,17 +301,20 @@ export default function ShortTicketPage() {
   useEffect(() => {
     const fetchTicket = async () => {
       try {
+        console.log("ID reçu:", id);
         if (typeof id !== 'string') {
           throw new Error("ID de billet invalide");
         }
         
         const fetchedTicket = await getTicketById(id);
+        console.log("Billet récupéré:", fetchedTicket);
         setTicket(fetchedTicket);
         
         // Générer le QR code
         const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(id)}`;
         setQrDataUrl(qrCodeUrl);
       } catch (err) {
+        console.error("Erreur détaillée:", err);
         setError(err instanceof Error ? err.message : "Erreur lors du chargement du billet");
       } finally {
         setLoading(false);
@@ -344,7 +347,9 @@ export default function ShortTicketPage() {
             </svg>
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">Billet non trouvé</h2>
-          <p className="text-gray-600 mb-6">Le billet que vous recherchez n'existe pas ou n'est plus disponible.</p>
+          <p className="text-gray-600 mb-2">Le billet que vous recherchez n'existe pas ou n'est plus disponible.</p>
+          <p className="text-gray-500 text-sm mb-4">ID recherché: {typeof id === 'string' ? id : 'ID invalide'}</p>
+          {error && <p className="text-red-600 text-sm mb-4">Erreur: {error}</p>}
           <Link href="/" className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors">
             Retour à l'accueil
           </Link>
