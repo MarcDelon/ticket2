@@ -9,7 +9,7 @@ import { getTicketById, updateTicketStatus } from "@/lib/ticketService";
 import { Ticket } from "@/lib/ticketService";
 
 // Charger dynamiquement le scanner QR pour éviter les problèmes SSR
-const QrScanner = dynamic(() => import("@/components/QrScanner"), {
+const QrScannerComponent = dynamic(() => import("@/components/QrScanner"), {
   ssr: false,
 });
 
@@ -245,8 +245,8 @@ export default function ScanPage() {
 
         <div className="relative rounded-3xl overflow-hidden border-4 border-emerald-500 shadow-luxury-lg bg-black mb-6 w-full animate-fade-in-scale"
           style={{ aspectRatio: "4 / 3" }}>
-          {typeof window !== 'undefined' && QrScanner && (
-            <QrScanner 
+          {typeof window !== 'undefined' && QrScannerComponent && (
+            <QrScannerComponent 
               onResult={handleScanResult}
               onError={handleScanError}
             />
