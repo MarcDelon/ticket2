@@ -63,3 +63,5 @@
 [00:41:49.834] Server  LOG      ○ Compiling /_error ...
 [00:46:21.276] Server  LOG      ✓ Compiled in 359ms
 [00:46:37.263] Server  LOG      ✓ Compiled in 160ms
+[00:48:07.194] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:50:57.450] Server  LOG      ✓ Compiled in 276ms
