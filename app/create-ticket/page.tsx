@@ -38,9 +38,12 @@ export default function CreateTicketPage() {
     if (authStatus === "true") {
       setIsAuthenticated(true);
       setShowAuthForm(false);
+    } else {
+      // Si pas authentifié, montrer le formulaire d'authentification
+      setShowAuthForm(true);
     }
   }, []);
-
+  
   // Fonction pour gérer l'authentification
   const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
