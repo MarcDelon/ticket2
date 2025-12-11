@@ -220,7 +220,15 @@ export default function ScanPage() {
           <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent text-center flex-1 truncate">
             {t("scan.title")}
           </h1>
-          <div className="w-10 flex-shrink-0"></div>
+          {isAuthenticated && (
+            <button
+              onClick={handleLogout}
+              className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all flex items-center gap-2 text-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Déconnexion</span>
+            </button>
+          )}
         </div>
       </header>
 

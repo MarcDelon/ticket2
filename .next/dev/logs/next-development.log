@@ -1,67 +1,12 @@
-[00:00:04.079] Server  WARN     ⚠ Minimum recommended TypeScript version is v5.1.0, older versions can potentially be incompatible with Next.js. Detected: 5.0.2
-[00:00:04.791] Server  LOG      ✓ Ready in 3.2s
-[00:00:10.495] Server  LOG      ○ Compiling / ...
-[00:00:16.719] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:09:20.001] Server  LOG      ○ Compiling /create-ticket ...
-[00:09:42.533] Browser ERROR   React has detected a change in the order of Hooks called by %s. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
-
-   Previous render            Next render
-   ------------------------------------------------------
-%s   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- CreateTicketPage 1. useContext                 useContext
-2. useRef                     useRef
-3. useState                   useState
-4. useRef                     useRef
-5. useState                   useState
-6. useState                   useState
-7. useState                   useState
-8. useState                   useState
-9. useState                   useState
-10. useState                  useState
-11. useState                  useState
-12. useState                  useState
-13. useEffect                 useEffect
-14. undefined                 useEffect
-
-[00:09:42.533] Browser ERROR   uncaughtError: Error: Rendered more hooks than during the previous render.
-[00:10:39.828] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:10:39.852] Server  LOG      ✓ Compiled in 360ms
-[00:10:41.259] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:10:41.513] Browser ERROR   React has detected a change in the order of Hooks called by %s. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
-
-   Previous render            Next render
-   ------------------------------------------------------
-%s   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- CreateTicketPage 1. useContext                 useContext
-2. useRef                     useRef
-3. useState                   useState
-4. useRef                     useRef
-5. useState                   useState
-6. useState                   useState
-7. useState                   useState
-8. useState                   useState
-9. useState                   useState
-10. useState                  useState
-11. useState                  useState
-12. useState                  useState
-13. useEffect                 useEffect
-14. undefined                 useEffect
-
-[00:10:41.513] Browser ERROR   uncaughtError: Error: Rendered more hooks than during the previous render.
-[00:29:23.616] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:29:23.640] Server  LOG      ✓ Compiled in 219ms
-[00:29:24.985] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:30:45.456] Server  LOG      ✓ Compiled in 407ms
-[00:35:08.048] Server  LOG      ✓ Compiled in 185ms
-[00:37:38.103] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:39:14.409] Server  LOG      ✓ Compiled in 154ms
-[00:39:53.609] Server  LOG      ✓ Compiled in 159ms
-[00:40:17.421] Server  LOG      ✓ Compiled in 154ms
-[00:41:20.144] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:41:47.536] Browser WARN    The camera stream is only accessible if the page is transferred via https.
-[00:41:47.537] Browser WARN    The camera stream is only accessible if the page is transferred via https.
-[00:41:49.834] Server  LOG      ○ Compiling /_error ...
-[00:46:21.276] Server  LOG      ✓ Compiled in 359ms
-[00:46:37.263] Server  LOG      ✓ Compiled in 160ms
-[00:48:07.194] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:50:57.450] Server  LOG      ✓ Compiled in 276ms
+[00:00:02.691] Server  WARN     ⚠ Minimum recommended TypeScript version is v5.1.0, older versions can potentially be incompatible with Next.js. Detected: 5.0.2
+[00:00:03.377] Server  LOG      ✓ Ready in 2.3s
+[00:00:06.550] Server  LOG      ○ Compiling /scan ...
+[00:00:14.102] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:14.444] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:00:14.444] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:00:17.116] Server  LOG      ○ Compiling /_error ...
+[00:00:23.904] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:00:23.904] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:01:01.041] Server  LOG      ✓ Compiled in 215ms
+[00:01:01.486] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:01:01.486] Browser WARN    The camera stream is only accessible if the page is transferred via https.
