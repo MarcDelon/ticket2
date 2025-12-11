@@ -2,11 +2,11 @@
   "[project]/components/QrScanner.tsx [app-client] (ecmascript, next/dynamic entry)": {
     "id": "[project]/components/QrScanner.tsx [app-client] (ecmascript, next/dynamic entry)",
     "files": [
-      "static/chunks/832e4_qr-scanner_qr-scanner-worker_min_26b34019.js",
+      "static/chunks/832e4_qr-scanner_qr-scanner-worker_min_738e848f.js",
       "static/chunks/_6d355d73._.js",
-      "static/chunks/components_QrScanner_tsx_e01dcf67._.js",
+      "static/chunks/components_QrScanner_tsx_810d70eb._.js",
       "static/chunks/832e4_qr-scanner_qr-scanner-worker_min_84e0bbb8.js",
-      "static/chunks/832e4_qr-scanner_qr-scanner-worker_min_d11f9833.js"
+      "static/chunks/832e4_qr-scanner_qr-scanner-worker_min_3cb7c58a.js"
     ]
   }
 }

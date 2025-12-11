@@ -10,3 +10,14 @@
 [00:01:01.041] Server  LOG      ✓ Compiled in 215ms
 [00:01:01.486] Browser WARN    The camera stream is only accessible if the page is transferred via https.
 [00:01:01.486] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:02:00.344] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:02:00.344] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:03:04.475] Server  LOG      ✓ Compiled in 320ms
+[00:03:04.933] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:03:04.933] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:03:19.655] Server  LOG      ✓ Compiled in 200ms
+[00:03:19.865] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:03:19.865] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:03:20.582] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:21.345] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:03:21.345] Browser WARN    The camera stream is only accessible if the page is transferred via https.
