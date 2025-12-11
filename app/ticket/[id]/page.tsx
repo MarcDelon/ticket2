@@ -359,7 +359,7 @@ export default function TicketPage() {
         await navigator.share({
           title: `Billet pour ${ticket.eventname}`,
           text: `Voici votre billet pour l'événement ${ticket.eventname}`,
-          url: `https://billets.ticket2-phi.vercel.app/${ticket.id}`,
+          url: `https://ticket2-phi.vercel.app/t/${ticket.id}`,
         });
       } catch (err) {
         console.log("Partage annulé ou non supporté");
@@ -367,7 +367,7 @@ export default function TicketPage() {
     } else {
       // Copier le lien dans le presse-papiers
       try {
-        await navigator.clipboard.writeText(`https://billets.ticket2-phi.vercel.app/${ticket.id}`);
+        await navigator.clipboard.writeText(`https://ticket2-phi.vercel.app/t/${ticket.id}`);
         alert("Lien copié dans le presse-papiers !");
       } catch (err) {
         console.error("Erreur lors de la copie du lien :", err);
