@@ -5,15 +5,10 @@ import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, Download, Share2, Check, Sparkles, Calendar, Clock, MapPin, User } from "lucide-react";
 import Link from "next/link";
 import { jsPDF } from "jspdf";
-// @ts-ignore
-import * as QRCodeReact from "qrcode.react";
 import QRCode from "qrcode";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { createTicket, Ticket } from "@/lib/ticketService";
 import { PremiumTicket } from "@/components/PremiumTicket";
-
-// @ts-ignore
-const QRCodeCanvas = QRCodeReact.QRCodeCanvas || QRCodeReact;
 
 export default function CreateTicketPage() {
   const { t, language } = useLanguage();
@@ -35,41 +30,22 @@ export default function CreateTicketPage() {
   // Effet pour générer le QR Code et convertir en data URL
   useEffect(() => {
     if (ticket && typeof window !== 'undefined') {
-      // Dynamically import QRCode to avoid SSR issues
-      import('qrcode').then((QRCodeModule) => {
-        // Créer un canvas temporaire pour générer le QR code
-        const canvas = document.createElement('canvas');
-        
-        // Générer le QR code
-        QRCodeModule.toCanvas(canvas, ticket.qrcode, {
-          width: 100,
-          margin: 1,
-          color: {
-            dark: '#3d3b37',
-            light: '#f9f6e5'
-          }
-        }, (error: Error | null | undefined) => {
-          if (error) {
-            console.error('Erreur lors de la génération du QR Code:', error);
-          } else {
-            // Convertir en data URL
-            const dataUrl = canvas.toDataURL('image/png');
-            setQrDataUrl(dataUrl);
-          }
-        });
-      }).catch((error: Error) => {
-        console.error('Erreur lors de l\'import de qrcode:', error);
-        // Fallback: créer une image vide
-        const canvas = document.createElement('canvas');
-        canvas.width = 100;
-        canvas.height = 100;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(0, 0, 100, 100);
-          ctx.fillStyle = '#000000';
-          ctx.font = '10px Arial';
-          ctx.fillText('QR CODE', 20, 50);
+      // Créer un canvas temporaire pour générer le QR code
+      const canvas = document.createElement('canvas');
+      
+      // Générer le QR code
+      QRCode.toCanvas(canvas, ticket.qrcode, {
+        width: 200,
+        margin: 1,
+        color: {
+          dark: '#3d3b37',
+          light: '#f9f6e5'
+        }
+      }, (error: Error | null | undefined) => {
+        if (error) {
+          console.error('Erreur lors de la génération du QR Code:', error);
+        } else {
+          // Convertir en data URL
           const dataUrl = canvas.toDataURL('image/png');
           setQrDataUrl(dataUrl);
         }
