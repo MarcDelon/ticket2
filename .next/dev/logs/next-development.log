@@ -57,3 +57,9 @@
 [00:39:14.409] Server  LOG      ✓ Compiled in 154ms
 [00:39:53.609] Server  LOG      ✓ Compiled in 159ms
 [00:40:17.421] Server  LOG      ✓ Compiled in 154ms
+[00:41:20.144] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:41:47.536] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:41:47.537] Browser WARN    The camera stream is only accessible if the page is transferred via https.
+[00:41:49.834] Server  LOG      ○ Compiling /_error ...
+[00:46:21.276] Server  LOG      ✓ Compiled in 359ms
+[00:46:37.263] Server  LOG      ✓ Compiled in 160ms
