@@ -61,95 +61,6 @@ export default function CreateTicketPage() {
     setShowAuthForm(true);
   };
 
-  // Afficher le formulaire d'authentification si l'utilisateur n'est pas authentifié
-  if (showAuthForm && !isAuthenticated) {
-    return (
-      <main className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-amber-600 to-orange-700 p-6 text-center relative">
-              <Link 
-                href="/" 
-                className="absolute left-4 top-4 p-2 rounded-full hover:bg-white/10 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5 text-white" />
-              </Link>
-              <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              <h1 className="text-xl font-light text-white tracking-tight">Accès administrateur</h1>
-              <p className="text-amber-100 text-sm mt-1">Entrez le code d'accès pour créer des billets</p>
-            </div>
-            
-            {/* Body */}
-            <div className="p-6">
-              <form onSubmit={handleAuth}>
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-900 mb-4 text-center">
-                    Code d'accès
-                  </label>
-                  
-                  <div className="flex justify-center gap-3 mb-6">
-                    <input
-                      type="password"
-                      value={authCode}
-                      onChange={(e) => setAuthCode(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-center text-lg font-bold"
-                      placeholder="Entrez le code d'accès"
-                      required
-                    />
-                  </div>
-                  
-                  {/* Clavier numérique */}
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
-                      <button
-                        key={number}
-                        type="button"
-                        onClick={() => setAuthCode(prev => prev + number.toString())}
-                        className="h-14 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xl transition-colors flex items-center justify-center"
-                      >
-                        {number}
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => setAuthCode(prev => prev.slice(0, -1))}
-                      className="h-14 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold transition-colors flex items-center justify-center"
-                    >
-                      <Delete className="w-6 h-6" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAuthCode(prev => prev + "0")}
-                      className="h-14 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xl transition-colors flex items-center justify-center"
-                    >
-                      0
-                    </button>
-                  </div>
-                </div>
-                
-                {authError && (
-                  <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm text-center">
-                    {authError}
-                  </div>
-                )}
-                
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 duration-200"
-                >
-                  Accéder
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
   // Effet pour générer le QR Code et convertir en data URL
   useEffect(() => {
     if (ticket && typeof window !== 'undefined') {
@@ -416,227 +327,320 @@ export default function CreateTicketPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50 relative">
-      {/* Fond décoratif animé */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-br from-amber-400/10 to-amber-600/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-indigo-400/10 to-purple-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1s" }}></div>
-      </div>
-
-      {/* Header */}
-      <header className="relative border-b border-gray-200/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-          {ticket ? (
-            <button
-              onClick={() => {
-                setTicket(null);
-                setFormData({ 
-                  eventName: "", 
-                  participantName: "", 
-                  date: new Date().toISOString().split("T")[0],
-                  time: "19:00",
-                  address: ""
-                });
-              }}
-              className="p-2 -ml-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-          ) : (
-            <Link 
-              href="/" 
-              className="p-2 -ml-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-          )}
-          <div className="flex-1 min-w-0">
-            <h1 className="text-base font-light text-gray-900 tracking-tight truncate">
-              {ticket ? (language === 'fr' ? "Votre billet" : "Your ticket") : t("create.title")}
-            </h1>
-            <p className="text-xs text-gray-500 font-light mt-0.5 truncate">
-              {ticket ? (language === 'fr' ? "Présentez ce billet à l'entrée" : "Present this ticket at the entrance") : t("create.subtitle")}
-            </p>
-          </div>
-          {isAuthenticated && (
-            <button
-              onClick={handleLogout}
-              className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-          )}
-        </div>
-      </header>
-
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        {!ticket ? (
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Form Section */}
-            <div>
-              <form onSubmit={generateTicket} className="space-y-6">
-                <div>
-                  <h2 className="text-xl font-light text-gray-900 mb-1 tracking-tight">{t("create.ticketDetails")}</h2>
-                  <p className="text-xs text-gray-500 font-light">{t("create.ticketDetailsDesc")}</p>
-                </div>
-
-                {error && (
-                  <div className="p-3 rounded bg-red-50 border border-red-200 text-red-700 text-xs">
-                    {error}
-                  </div>
-                )}
-
-                <div className="space-y-5">
-                  {/* Event Name */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-900 mb-2">{t("create.eventName")}</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.eventName}
-                      onChange={(e) => setFormData({ ...formData, eventName: e.target.value })}
-                      placeholder={t("create.eventPlaceholder")}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white/80 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm backdrop-blur-sm"
-                    />
-                  </div>
-
-                  {/* Participant Name */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-900 mb-2">{t("create.participantName")}</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.participantName}
-                      onChange={(e) => setFormData({ ...formData, participantName: e.target.value })}
-                      placeholder={t("create.participantPlaceholder")}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white/80 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm backdrop-blur-sm"
-                    />
-                  </div>
-
-                  {/* Date and Time */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-900 mb-2">{t("create.eventDate")}</label>
-                      <input
-                        type="date"
-                        value={formData.date}
-                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                        className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white/80 text-gray-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm backdrop-blur-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-900 mb-2">{t("create.eventTime")}</label>
-                      <input
-                        type="time"
-                        value={formData.time}
-                        onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                        className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white/80 text-gray-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm backdrop-blur-sm"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Address */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-900 mb-2">{t("create.eventAddress")}</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.address}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      placeholder={t("create.addressPlaceholder")}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white/80 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm backdrop-blur-sm"
-                    />
-                  </div>
-                </div>
-
-                {/* Generate Button */}
-                <button
-                  type="submit"
-                  disabled={isGenerating || !formData.participantName || !formData.eventName || !formData.address}
-                  className="w-full py-3 rounded-lg bg-indigo-700 hover:bg-indigo-800 active:bg-indigo-900 text-white font-medium transition-all disabled:opacity-60 disabled:cursor-not-allowed text-sm shadow-lg hover:shadow-xl"
+      {/* Afficher le formulaire d'authentification si l'utilisateur n'est pas authentifié */}
+      {showAuthForm && !isAuthenticated && (
+        <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
+          <div className="w-full max-w-md">
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-amber-600 to-orange-700 p-6 text-center relative">
+                <Link 
+                  href="/" 
+                  className="absolute left-4 top-4 p-2 rounded-full hover:bg-white/10 transition-colors"
                 >
-                  {isGenerating ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span className="text-sm">{t("create.generating")}</span>
-                    </span>
-                  ) : (
-                    <span className="text-sm">{t("create.generateButton")}</span>
+                  <ArrowLeft className="w-5 h-5 text-white" />
+                </Link>
+                <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-8 h-8 text-white" />
+                </div>
+                <h1 className="text-xl font-light text-white tracking-tight">Accès administrateur</h1>
+                <p className="text-amber-100 text-sm mt-1">Entrez le code d'accès pour créer des billets</p>
+              </div>
+              
+              {/* Body */}
+              <div className="p-6">
+                <form onSubmit={handleAuth}>
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-900 mb-4 text-center">
+                      Code d'accès
+                    </label>
+                    
+                    <div className="flex justify-center gap-3 mb-6">
+                      <input
+                        type="password"
+                        value={authCode}
+                        onChange={(e) => setAuthCode(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-center text-lg font-bold"
+                        placeholder="Entrez le code d'accès"
+                        required
+                      />
+                    </div>
+                    
+                    {/* Clavier numérique */}
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
+                        <button
+                          key={number}
+                          type="button"
+                          onClick={() => setAuthCode(prev => prev + number.toString())}
+                          className="h-14 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xl transition-colors flex items-center justify-center"
+                        >
+                          {number}
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setAuthCode(prev => prev.slice(0, -1))}
+                        className="h-14 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold transition-colors flex items-center justify-center"
+                      >
+                        <Delete className="w-6 h-6" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAuthCode(prev => prev + "0")}
+                        className="h-14 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xl transition-colors flex items-center justify-center"
+                      >
+                        0
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {authError && (
+                    <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm text-center">
+                      {authError}
+                    </div>
                   )}
+                  
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 duration-200"
+                  >
+                    Accéder
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Afficher le formulaire de création de billet si l'utilisateur est authentifié */}
+      {isAuthenticated && !showAuthForm && (
+        <>
+          {/* Fond décoratif animé */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-br from-amber-400/10 to-amber-600/10 rounded-full blur-3xl animate-float"></div>
+            <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-indigo-400/10 to-purple-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1s" }}></div>
+          </div>
+
+          {/* Header */}
+          <header className="relative border-b border-gray-200/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
+            <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+              {ticket ? (
+                <button
+                  onClick={() => {
+                    setTicket(null);
+                    setFormData({ 
+                      eventName: "", 
+                      participantName: "", 
+                      date: new Date().toISOString().split("T")[0],
+                      time: "19:00",
+                      address: ""
+                    });
+                  }}
+                  className="p-2 -ml-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+                >
+                  <ArrowLeft className="w-5 h-5" />
                 </button>
-              </form>
+              ) : (
+                <Link 
+                  href="/" 
+                  className="p-2 -ml-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </Link>
+              )}
+              <div className="flex-1 min-w-0">
+                <h1 className="text-base font-light text-gray-900 tracking-tight truncate">
+                  {ticket ? (language === 'fr' ? "Votre billet" : "Your ticket") : t("create.title")}
+                </h1>
+                <p className="text-xs text-gray-500 font-light mt-0.5 truncate">
+                  {ticket ? (language === 'fr' ? "Présentez ce billet à l'entrée" : "Present this ticket at the entrance") : t("create.subtitle")}
+                </p>
+              </div>
+              {isAuthenticated && (
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+              )}
             </div>
+          </header>
 
-            {/* Preview Section - Empty State */}
-            <div className="hidden md:flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-8 h-8 text-indigo-600">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m-3.75 3v-3m0-6V3m0 0l3-3m-3 3l-3-3m3 3V12M9 12l3-3m-3 3l-3 3m3-3V18" />
-                  </svg>
+          <div className="max-w-6xl mx-auto px-4 py-6">
+            {!ticket ? (
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Form Section */}
+                <div>
+                  <form onSubmit={generateTicket} className="space-y-6">
+                    <div>
+                      <h2 className="text-xl font-light text-gray-900 mb-1 tracking-tight">{t("create.ticketDetails")}</h2>
+                      <p className="text-xs text-gray-500 font-light">{t("create.ticketDetailsDesc")}</p>
+                    </div>
+
+                    {error && (
+                      <div className="p-3 rounded bg-red-50 border border-red-200 text-red-700 text-xs">
+                        {error}
+                      </div>
+                    )}
+
+                    <div className="space-y-5">
+                      {/* Event Name */}
+                      <div>
+                        <label className="block text-xs font-medium text-gray-900 mb-2">{t("create.eventName")}</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.eventName}
+                          onChange={(e) => setFormData({ ...formData, eventName: e.target.value })}
+                          placeholder={t("create.eventPlaceholder")}
+                          className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white/80 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm backdrop-blur-sm"
+                        />
+                      </div>
+
+                      {/* Participant Name */}
+                      <div>
+                        <label className="block text-xs font-medium text-gray-900 mb-2">{t("create.participantName")}</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.participantName}
+                          onChange={(e) => setFormData({ ...formData, participantName: e.target.value })}
+                          placeholder={t("create.participantPlaceholder")}
+                          className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white/80 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm backdrop-blur-sm"
+                        />
+                      </div>
+
+                      {/* Date and Time */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-900 mb-2">{t("create.eventDate")}</label>
+                          <input
+                            type="date"
+                            value={formData.date}
+                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                            className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white/80 text-gray-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm backdrop-blur-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-900 mb-2">{t("create.eventTime")}</label>
+                          <input
+                            type="time"
+                            value={formData.time}
+                            onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                            className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white/80 text-gray-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm backdrop-blur-sm"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Address */}
+                      <div>
+                        <label className="block text-xs font-medium text-gray-900 mb-2">{t("create.eventAddress")}</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.address}
+                          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                          placeholder={t("create.addressPlaceholder")}
+                          className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white/80 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm backdrop-blur-sm"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Generate Button */}
+                    <button
+                      type="submit"
+                      disabled={isGenerating || !formData.participantName || !formData.eventName || !formData.address}
+                      className="w-full py-3 rounded-lg bg-indigo-700 hover:bg-indigo-800 active:bg-indigo-900 text-white font-medium transition-all disabled:opacity-60 disabled:cursor-not-allowed text-sm shadow-lg hover:shadow-xl"
+                    >
+                      {isGenerating ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          <span className="text-sm">{t("create.generating")}</span>
+                        </span>
+                      ) : (
+                        <span className="text-sm">{t("create.generateButton")}</span>
+                      )}
+                    </button>
+                  </form>
                 </div>
-                <p className="text-gray-500 font-light text-xs">{t("create.preview")}</p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          // Ticket Display
-          <div className="relative">
-            <div className="mb-8 text-center animate-fade-in-scale">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-luxury">
-                <Check className="w-8 h-8 text-white" />
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 tracking-tight">{t("ticket.generated")}</h2>
-              <p className="text-sm text-gray-600">{t("ticket.ready")}</p>
-            </div>
 
-            {/* Nouveau Composant Premium Ticket */}
-            <BilletAcces ticket={ticket} qrDataUrl={qrDataUrl} />
-
-            {/* Actions Premium */}
-            <div className="mt-10 max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="px-8 py-4 rounded-2xl border-2 border-gray-300 bg-white text-gray-900 font-bold text-sm shadow-lg text-center">
-                <p className="font-bold text-gray-900 mb-1">Lien de votre billet</p>
-                <p className="text-xs text-gray-600 mb-2">Partagez ce lien avec le participant</p>
-                <div className="bg-gray-100 p-2 rounded text-[10px] font-mono break-all">
-                  {typeof window !== 'undefined' && `https://ticket2-phi.vercel.app/t/${ticket.id}`}
+                {/* Preview Section - Empty State */}
+                <div className="hidden md:flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-8 h-8 text-indigo-600">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m-3.75 3v-3m0-6V3m0 0l3-3m-3 3l-3-3m3 3V12M9 12l3-3m-3 3l-3 3m3-3V18" />
+                      </svg>
+                    </div>
+                    <p className="text-gray-500 font-light text-xs">{t("create.preview")}</p>
+                  </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">Ce lien est unique et sécurisé</p>
               </div>
-              <button 
-                onClick={() => {
-                  if (typeof navigator !== 'undefined' && navigator.clipboard) {
-                    navigator.clipboard.writeText(`https://ticket2-phi.vercel.app/t/${ticket.id}`);
-                    alert("Lien copié dans le presse-papiers !");
-                  }
-                }}
-                className="px-8 py-4 rounded-2xl border-2 border-gray-300 hover:border-amber-600 bg-white hover:bg-amber-50 text-gray-900 hover:text-amber-700 font-bold transition-all text-sm hover:scale-105 duration-300 shadow-lg flex items-center justify-center gap-2"
-              >
-                <Share2 className="w-5 h-5" />
-                Copier le lien
-              </button>
-            </div>
-            
-            {/* Back Button */}
-            <div className="text-center mt-6">
-              <button
-                onClick={() => {
-                  setTicket(null);
-                  setFormData({ 
-                    eventName: "", 
-                    participantName: "", 
-                    date: new Date().toISOString().split("T")[0],
-                    time: "19:00",
-                    address: ""
-                  });
-                }}
-                className="text-sm text-amber-600 hover:text-amber-700 font-bold transition-colors hover:underline"
-              >
-                ← {t("actions.generateAnother")}
-              </button>
-            </div>
+            ) : (
+              // Ticket Display
+              <div className="relative">
+                <div className="mb-8 text-center animate-fade-in-scale">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-luxury">
+                    <Check className="w-8 h-8 text-white" />
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 tracking-tight">{t("ticket.generated")}</h2>
+                  <p className="text-sm text-gray-600">{t("ticket.ready")}</p>
+                </div>
+
+                {/* Nouveau Composant Premium Ticket */}
+                <BilletAcces ticket={ticket} qrDataUrl={qrDataUrl} />
+
+                {/* Actions Premium */}
+                <div className="mt-10 max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="px-8 py-4 rounded-2xl border-2 border-gray-300 bg-white text-gray-900 font-bold text-sm shadow-lg text-center">
+                    <p className="font-bold text-gray-900 mb-1">Lien de votre billet</p>
+                    <p className="text-xs text-gray-600 mb-2">Partagez ce lien avec le participant</p>
+                    <div className="bg-gray-100 p-2 rounded text-[10px] font-mono break-all">
+                      {typeof window !== 'undefined' && `https://ticket2-phi.vercel.app/t/${ticket.id}`}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">Ce lien est unique et sécurisé</p>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                        navigator.clipboard.writeText(`https://ticket2-phi.vercel.app/t/${ticket.id}`);
+                        alert("Lien copié dans le presse-papiers !");
+                      }
+                    }}
+                    className="px-8 py-4 rounded-2xl border-2 border-gray-300 hover:border-amber-600 bg-white hover:bg-amber-50 text-gray-900 hover:text-amber-700 font-bold transition-all text-sm hover:scale-105 duration-300 shadow-lg flex items-center justify-center gap-2"
+                  >
+                    <Share2 className="w-5 h-5" />
+                    Copier le lien
+                  </button>
+                </div>
+
+                {/* Actions supplémentaires */}
+                <div className="mt-6 max-w-2xl mx-auto flex flex-col sm:flex-row gap-4">
+                  <button
+                    onClick={downloadPDF}
+                    className="flex-1 px-6 py-3 rounded-lg border-2 border-gray-300 hover:border-indigo-600 bg-white hover:bg-indigo-50 text-gray-900 hover:text-indigo-700 font-medium transition-all text-sm flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    {t("actions.download")}
+                  </button>
+                  <button
+                    onClick={() => window.print()}
+                    className="flex-1 px-6 py-3 rounded-lg bg-indigo-700 hover:bg-indigo-800 text-white font-medium transition-all text-sm flex items-center justify-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24-.03.48-.062.72-.096m-.72.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.911-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.911-.247M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM9 6.375a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                    </svg>
+                    {t("actions.print")}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </main>
   );
 }
