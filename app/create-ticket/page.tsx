@@ -34,14 +34,33 @@ export default function CreateTicketPage() {
   
   // Vérifier l'authentification au chargement
   useEffect(() => {
-    const authStatus = localStorage.getItem("createTicketAuth");
-    if (authStatus === "true") {
-      setIsAuthenticated(true);
-      setShowAuthForm(false);
-    } else {
-      // Si pas authentifié, montrer le formulaire d'authentification
-      setShowAuthForm(true);
-    }
+    const checkAuthStatus = () => {
+      const authStatus = localStorage.getItem("createTicketAuth");
+      
+      if (authStatus === "true") {
+        setIsAuthenticated(true);
+        setShowAuthForm(false);
+      } else {
+        setIsAuthenticated(false);
+        setShowAuthForm(true);
+      }
+    };
+    
+    // Vérifier immédiatement
+    checkAuthStatus();
+    
+    // Et aussi quand le storage change
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "createTicketAuth") {
+        checkAuthStatus();
+      }
+    };
+    
+    window.addEventListener("storage", handleStorageChange);
+    
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
   
   // Fonction pour gérer l'authentification
