@@ -54,9 +54,9 @@ export default function LoginPage() {
   }
 
   const verifyPin = (pinToVerify: string[]) => {
-    // Vérifier le code PIN (par exemple: 2823)
+    // Vérifier le code PIN (mis à jour à 1509)
     const enteredPin = pinToVerify.join("")
-    if (enteredPin === "2823") {
+    if (enteredPin === "1509") {
       setSuccess(true)
       // Stocker l'état d'authentification
       localStorage.setItem("adminAuthenticated", "true")

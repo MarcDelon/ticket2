@@ -1,170 +1,108 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-import { ArrowLeft, Loader, CheckCircle, XCircle, AlertCircle, Camera } from "lucide-react"
-import Link from "next/link"
-import jsQR from "jsqr"
-import { useLanguage } from "@/contexts/LanguageContext"
-import { getTicketById, updateTicketStatus, Ticket } from "@/lib/ticketService"
+import { useState, useEffect } from "react";
+import { ArrowLeft, Scan, Camera, QrCode } from "lucide-react";
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+// Charger dynamiquement le scanner QR pour éviter les problèmes SSR
+const QrScanner = dynamic(() => import("@/components/QrScanner"), {
+  ssr: false,
+});
 
 export default function ScanPage() {
-  const { t } = useLanguage()
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [scanning, setScanning] = useState(false)
-  const [result, setResult] = useState<{
-    type: "success" | "error" | "used"
-    message: string
-    ticket?: Ticket
-  } | null>(null)
-  const [isCameraReady, setIsCameraReady] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const successSoundRef = useRef<HTMLAudioElement>(null)
-  const errorSoundRef = useRef<HTMLAudioElement>(null)
-  const usedSoundRef = useRef<HTMLAudioElement>(null)
+  // État pour l'authentification
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authCode, setAuthCode] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [showAuthForm, setShowAuthForm] = useState(true);
+  const { t, language } = useLanguage();
+  const [scanning, setScanning] = useState(true);
 
+  // Vérifier l'authentification au chargement
   useEffect(() => {
-    startCamera()
-    
-    // Nettoyer les ressources quand le composant est démonté
-    return () => {
-      stopCamera()
+    const authStatus = localStorage.getItem("scanAuth");
+    if (authStatus === "true") {
+      setIsAuthenticated(true);
+      setShowAuthForm(false);
     }
-  }, [])
+  }, []);
 
-  useEffect(() => {
-    if (!isCameraReady || !scanning) return
-
-    const interval = setInterval(() => {
-      scanQRCode()
-    }, 500)
-
-    return () => clearInterval(interval)
-  }, [scanning, isCameraReady])
-
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      })
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        videoRef.current.onloadedmetadata = () => {
-          setIsCameraReady(true)
-          setScanning(true)
-        }
-      }
-    } catch (err) {
-      setResult({ type: "error", message: t("scan.invalid") })
+  // Fonction pour gérer l'authentification
+  const handleAuth = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (authCode === "982125") {
+      localStorage.setItem("scanAuth", "true");
+      setIsAuthenticated(true);
+      setShowAuthForm(false);
+      setAuthError("");
+    } else {
+      setAuthError("Code d'accès incorrect");
     }
-  }
+  };
 
-  const stopCamera = () => {
-    try {
-      // Arrêter tous les tracks de la caméra
-      if (videoRef.current?.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream
-        const tracks = stream.getTracks()
-        tracks.forEach(track => {
-          track.stop()
-        })
-      }
-      
-      // Nettoyer la source vidéo
-      if (videoRef.current) {
-        videoRef.current.srcObject = null
-      }
-      
-      setIsCameraReady(false)
-      setScanning(false)
-    } catch (err) {
-      console.error("Erreur lors de l'arrêt de la caméra:", err)
-    }
-  }
+  // Fonction pour se déconnecter
+  const handleLogout = () => {
+    localStorage.removeItem("scanAuth");
+    setIsAuthenticated(false);
+    setShowAuthForm(true);
+  };
 
-  const scanQRCode = () => {
-    if (!videoRef.current || !canvasRef.current) return
+  // Afficher le formulaire d'authentification si l'utilisateur n'est pas authentifié
+  if (showAuthForm && !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <div className="text-center mb-8">
+              <div className="mx-auto bg-amber-100 rounded-full p-3 w-16 h-16 flex items-center justify-center mb-4">
+                <Scan className="w-8 h-8 text-amber-600" />
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Accès administrateur</h1>
+              <p className="text-gray-600">Entrez le code d'accès pour scanner des billets</p>
+            </div>
 
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
+            <form onSubmit={handleAuth} className="space-y-6">
+              <div>
+                <label htmlFor="authCode" className="block text-sm font-medium text-gray-700 mb-2">
+                  Code d'accès
+                </label>
+                <input
+                  type="password"
+                  id="authCode"
+                  value={authCode}
+                  onChange={(e) => setAuthCode(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                  placeholder="Entrez le code d'accès"
+                  required
+                />
+                {authError && (
+                  <p className="mt-2 text-sm text-red-600">{authError}</p>
+                )}
+              </div>
 
-    canvas.width = videoRef.current.videoWidth
-    canvas.height = videoRef.current.videoHeight
+              <button
+                type="submit"
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium py-3 px-4 rounded-lg transition-all transform hover:scale-105 duration-200"
+              >
+                Accéder
+              </button>
+            </form>
 
-    ctx.drawImage(videoRef.current, 0, 0)
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-    const code = jsQR(imageData.data, imageData.width, imageData.height)
-
-    if (code) {
-      processTicket(code.data)
-      setScanning(false)
-      stopCamera() // Arrêter la caméra après un scan réussi
-    }
-  }
-
-  const processTicket = async (ticketId: string) => {
-    try {
-      // Récupérer le billet depuis la base de données
-      const ticket = await getTicketById(ticketId)
-      
-      if (!ticket) {
-        // Jouer le son d'erreur
-        if (errorSoundRef.current) {
-          errorSoundRef.current.currentTime = 0;
-          errorSoundRef.current.play().catch(e => console.log("Erreur de lecture audio:", e));
-        }
-        setResult({ type: "error", message: t("scan.invalid") })
-        return
-      }
-
-      // Vérifier si le billet a déjà été utilisé
-      if (ticket.status === "used") {
-        // Jouer le son de billet déjà utilisé
-        if (usedSoundRef.current) {
-          usedSoundRef.current.currentTime = 0;
-          usedSoundRef.current.play().catch(e => console.log("Erreur de lecture audio:", e));
-        }
-        setResult({ 
-          type: "used", 
-          message: t("scan.alreadyUsed"),
-          ticket
-        })
-        return
-      }
-
-      // Marquer le billet comme utilisé
-      await updateTicketStatus(ticketId, "used")
-      
-      // Mettre à jour le ticket avec le nouveau statut
-      const updatedTicket = { ...ticket, status: "used" as const }
-      
-      // Jouer le son de succès
-      if (successSoundRef.current) {
-        successSoundRef.current.currentTime = 0;
-        successSoundRef.current.play().catch(e => console.log("Erreur de lecture audio:", e));
-      }
-      
-      setResult({
-        type: "success",
-        message: t("scan.welcome").replace("{name}", ticket.participantname),
-        ticket: updatedTicket,
-      })
-    } catch (err) {
-      // Jouer le son d'erreur
-      if (errorSoundRef.current) {
-        errorSoundRef.current.currentTime = 0;
-        errorSoundRef.current.play().catch(e => console.log("Erreur de lecture audio:", e));
-      }
-      setError(err instanceof Error ? err.message : "Erreur lors du traitement du billet")
-      setResult({ type: "error", message: t("scan.invalid") })
-    }
-  }
-
-  const resetScan = () => {
-    setResult(null)
-    setError(null)
-    startCamera() // Redémarrer la caméra
+            <div className="mt-6 text-center">
+              <Link 
+                href="/"
+                className="text-amber-600 hover:text-amber-700 font-medium text-sm flex items-center justify-center"
+              >
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Retour à l'accueil
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

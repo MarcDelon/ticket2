@@ -1,6 +1,5 @@
 "use client";
 
-import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, Download, Share2, Check, Sparkles, Calendar, Clock, MapPin, User } from "lucide-react";
 import Link from "next/link";
@@ -26,6 +25,97 @@ export default function CreateTicketPage() {
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // État pour l'authentification
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authCode, setAuthCode] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [showAuthForm, setShowAuthForm] = useState(true);
+
+  // Vérifier l'authentification au chargement
+  useEffect(() => {
+    const authStatus = localStorage.getItem("createTicketAuth");
+    if (authStatus === "true") {
+      setIsAuthenticated(true);
+      setShowAuthForm(false);
+    }
+  }, []);
+
+  // Fonction pour gérer l'authentification
+  const handleAuth = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (authCode === "982125") {
+      localStorage.setItem("createTicketAuth", "true");
+      setIsAuthenticated(true);
+      setShowAuthForm(false);
+      setAuthError("");
+    } else {
+      setAuthError("Code d'accès incorrect");
+    }
+  };
+
+  // Fonction pour se déconnecter
+  const handleLogout = () => {
+    localStorage.removeItem("createTicketAuth");
+    setIsAuthenticated(false);
+    setShowAuthForm(true);
+  };
+
+  // Afficher le formulaire d'authentification si l'utilisateur n'est pas authentifié
+  if (showAuthForm && !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <div className="text-center mb-8">
+              <div className="mx-auto bg-amber-100 rounded-full p-3 w-16 h-16 flex items-center justify-center mb-4">
+                <Sparkles className="w-8 h-8 text-amber-600" />
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Accès administrateur</h1>
+              <p className="text-gray-600">Entrez le code d'accès pour créer des billets</p>
+            </div>
+
+            <form onSubmit={handleAuth} className="space-y-6">
+              <div>
+                <label htmlFor="authCode" className="block text-sm font-medium text-gray-700 mb-2">
+                  Code d'accès
+                </label>
+                <input
+                  type="password"
+                  id="authCode"
+                  value={authCode}
+                  onChange={(e) => setAuthCode(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                  placeholder="Entrez le code d'accès"
+                  required
+                />
+                {authError && (
+                  <p className="mt-2 text-sm text-red-600">{authError}</p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium py-3 px-4 rounded-lg transition-all transform hover:scale-105 duration-200"
+              >
+                Accéder
+              </button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <Link 
+                href="/"
+                className="text-amber-600 hover:text-amber-700 font-medium text-sm flex items-center justify-center"
+              >
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Retour à l'accueil
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Effet pour générer le QR Code et convertir en data URL
   useEffect(() => {
@@ -320,6 +410,14 @@ export default function CreateTicketPage() {
               {ticket ? (language === 'fr' ? "Présentez ce billet à l'entrée" : "Present this ticket at the entrance") : t("create.subtitle")}
             </p>
           </div>
+          {isAuthenticated && (
+            <button
+              onClick={handleLogout}
+              className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
         </div>
       </header>
 
