@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ArrowLeft, Scan, Camera, QrCode } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ArrowLeft, Scan, Camera, QrCode, Loader, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getTicketById, updateTicketStatus } from "@/lib/ticketService";
+import { Ticket } from "@/lib/ticketService";
 
 // Charger dynamiquement le scanner QR pour éviter les problèmes SSR
 const QrScanner = dynamic(() => import("@/components/QrScanner"), {
@@ -19,6 +21,22 @@ export default function ScanPage() {
   const [showAuthForm, setShowAuthForm] = useState(true);
   const { t, language } = useLanguage();
   const [scanning, setScanning] = useState(true);
+  
+  // Références pour les éléments audio
+  const successSoundRef = useRef<HTMLAudioElement>(null);
+  const errorSoundRef = useRef<HTMLAudioElement>(null);
+  const usedSoundRef = useRef<HTMLAudioElement>(null);
+  
+  // États pour le scanner
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<{
+    type: "success" | "error" | "used";
+    message: string;
+    ticket?: Ticket;
+  } | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isCameraReady, setIsCameraReady] = useState(false);
 
   // Vérifier l'authentification au chargement
   useEffect(() => {
@@ -47,6 +65,82 @@ export default function ScanPage() {
     localStorage.removeItem("scanAuth");
     setIsAuthenticated(false);
     setShowAuthForm(true);
+  };
+
+  // Fonction pour réinitialiser le scan
+  const resetScan = () => {
+    setResult(null);
+    setScanning(true);
+    setError(null);
+  };
+
+  // Fonction appelée lorsque le scanner trouve un QR code
+  const handleScanResult = async (data: string) => {
+    if (!scanning) return;
+    
+    setScanning(false);
+    
+    try {
+      // Extraire l'ID du ticket de l'URL
+      const url = new URL(data);
+      const ticketId = url.pathname.split('/').pop();
+      
+      if (!ticketId) {
+        throw new Error("Invalid ticket URL");
+      }
+      
+      // Récupérer le ticket
+      const ticket = await getTicketById(ticketId);
+      
+      if (!ticket) {
+        // Jouer le son d'erreur
+        errorSoundRef.current?.play().catch(() => {});
+        setResult({
+          type: "error",
+          message: t("scan.ticketNotFound")
+        });
+        return;
+      }
+      
+      // Vérifier si le ticket est déjà utilisé
+      if (ticket.status === "used") {
+        // Jouer le son de ticket utilisé
+        usedSoundRef.current?.play().catch(() => {});
+        setResult({
+          type: "used",
+          message: t("scan.ticketAlreadyUsed"),
+          ticket
+        });
+        return;
+      }
+      
+      // Marquer le ticket comme utilisé
+      await updateTicketStatus(ticketId, "used");
+      
+      // Mettre à jour le ticket local
+      const updatedTicket = { ...ticket, status: "used" as const };
+      
+      // Jouer le son de succès
+      successSoundRef.current?.play().catch(() => {});
+      setResult({
+        type: "success",
+        message: t("scan.accessGranted"),
+        ticket: updatedTicket
+      });
+    } catch (err) {
+      console.error("Scan error:", err);
+      // Jouer le son d'erreur
+      errorSoundRef.current?.play().catch(() => {});
+      setResult({
+        type: "error",
+        message: t("scan.invalidQRCode")
+      });
+    }
+  };
+
+  // Fonction appelée en cas d'erreur du scanner
+  const handleScanError = (errorMessage: string) => {
+    setError(errorMessage);
   };
 
   // Afficher le formulaire d'authentification si l'utilisateur n'est pas authentifié
@@ -151,14 +245,12 @@ export default function ScanPage() {
 
         <div className="relative rounded-3xl overflow-hidden border-4 border-emerald-500 shadow-luxury-lg bg-black mb-6 w-full animate-fade-in-scale"
           style={{ aspectRatio: "4 / 3" }}>
-          <video 
-            ref={videoRef} 
-            autoPlay 
-            playsInline 
-            muted
-            className="w-full h-full object-cover"
-          />
-          <canvas ref={canvasRef} className="hidden" />
+          {typeof window !== 'undefined' && QrScanner && (
+            <QrScanner 
+              onResult={handleScanResult}
+              onError={handleScanError}
+            />
+          )}
 
           {/* Badge Scan en haut */}
           <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-emerald-500/90 backdrop-blur-sm text-white font-bold text-xs flex items-center gap-2">
