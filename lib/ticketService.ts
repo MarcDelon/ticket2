@@ -24,7 +24,7 @@ export async function createTicket(ticketData: Omit<Ticket, 'id' | 'createdat' |
     id: randomId,
     status: 'valid' as const,
     createdat: new Date().toISOString(),
-    deleted: false
+    deleted: false // S'assurer que le billet n'est pas marqué comme supprimé
   }
 
   const { data, error } = await supabase
@@ -134,6 +134,7 @@ export async function getTicketById(ticketId: string) {
     .from('tickets')
     .select('*')
     .eq('id', ticketId)
+    .eq('deleted', false) // Ne retourner que les billets non supprimés
     .single()
 
   if (error) {

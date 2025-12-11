@@ -1,14 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { notFound } from 'next/navigation';
-import { getTicketById } from '@/lib/ticketService';
-import { Ticket } from '@/lib/ticketService';
-import { Share2 } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { getTicketById, Ticket } from "@/lib/ticketService";
+import { ArrowLeft, Share2 } from "lucide-react";
+import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-// Composant BilletAcces (copié depuis app/ticket/[id]/page.tsx)
-function BilletAcces({ ticket, qrDataUrl }: { ticket: Ticket; qrDataUrl: string }) {
+interface BilletAccesProps {
+  ticket: Ticket;
+  qrDataUrl: string | null;
+}
+
+function BilletAcces({ ticket, qrDataUrl }: BilletAccesProps) {
   return (
     <div className="access-ticket w-full max-w-2xl mx-auto my-8">
       <style dangerouslySetInnerHTML={{
@@ -29,316 +33,302 @@ function BilletAcces({ ticket, qrDataUrl }: { ticket: Ticket; qrDataUrl: string 
             display: flex;
             flex-direction: column; /* Empilement vertical par défaut (Mobile First) */
             width: 95%; /* Prend presque toute la largeur du téléphone */
-            max-width: 400px; /* Largeur maximale pour mobile */
-            margin: 2rem auto; /* Centrage horizontal */
-            padding: 1.5rem; /* Espacement interne */
-            background: linear-gradient(145deg, var(--color-light), #ffffff);
-            border-radius: 20px; /* Coins arrondis */
-            box-shadow: 
-              0 10px 30px rgba(0,0,0,0.1),
-              inset 0 1px 0 rgba(255,255,255,0.8);
+            max-width: 400px; /* Taille maximale pour simuler un écran mobile */
+            background-color: var(--color-accent);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden; 
+            color: var(--color-dark);
             position: relative;
-            overflow: hidden;
-            border: 1px solid var(--color-accent);
+            font-family: 'Montserrat', sans-serif;
           }
 
-          /* Effet décoratif doré */
-          .access-ticket::before {
+          /* ------------------- SECTION INFOS ------------------- */
+          .info-section {
+            padding: 30px 20px;
+            text-align: center; /* Centrer le texte sur mobile pour plus de clarté */
+            background-color: #fff; 
+          }
+
+          .ticket-header {
+            font-size: 0.9em;
+            color: var(--color-gold);
+            letter-spacing: 4px; /* Plus d'espacement */
+            margin: 0 0 10px 0;
+          }
+
+          .event-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2em;
+            margin-bottom: 25px;
+            font-weight: 700;
+          }
+
+          .ticket-details {
+            display: flex;
+            flex-direction: column; /* Empile les détails */
+            gap: 15px;
+            margin-bottom: 25px;
+          }
+
+          .detail-item {
+            min-width: 100%;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #eee;
+          }
+
+          .label {
+            font-size: 0.8em;
+            display: block;
+            color: #888;
+            margin-bottom: 5px;
+          }
+
+          .value {
+            font-size: 1.2em;
+            margin: 0;
+            font-weight: 700;
+          }
+
+          .instructions {
+            border-top: none;
+            padding-top: 0;
+            font-size: 0.8em;
+            font-style: italic;
+            color: #888;
+            margin: 0;
+          }
+
+          /* ------------------- LIGNE DE SÉPARATION (Perforation) ------------------- */
+          .perforation-line {
+            height: 15px; /* Devient horizontal */
+            width: 100%;
+            position: relative;
+            background-color: #fff; 
+            border-top: 2px dashed #ccc;
+            z-index: 10;
+          }
+
+          /* Effet de perforation (demi-cercles) */
+          .perforation-line::before,
+          .perforation-line::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--color-gold), #d4c0a1, var(--color-gold));
+            height: 30px;
+            width: 30px;
+            background-color: var(--color-dark); /* Fait correspondre la couleur au body/fond */
+            border-radius: 50%;
+            left: 10%; /* Décalage pour le look */
+            z-index: 20;
+            top: -15px;
           }
 
-          /* En-tête du billet */
-          .ticket-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px dashed var(--color-gold);
+          .perforation-line::after {
+            left: auto;
+            right: 10%;
           }
 
-          /* Titre principal */
-          .ticket-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
+
+          /* ------------------- SECTION DU CODE QR (Mise en avant) ------------------- */
+          .scan-section {
+            order: -1; /* Place la section de scan en haut sur mobile */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--color-dark); /* Fond sombre pour le contraste maximal */
+            color: var(--color-light);
+          }
+
+          .qr-container {
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 4px solid var(--color-gold);
+            box-shadow: 0 0 20px rgba(197, 164, 126, 0.6); /* Ombre plus visible */
+          }
+
+          .qr-code-img {
+            width: 200px; /* TAILLE DU QR CODE AUGMENTÉE POUR UN SCAN FACILE SUR MOBILE */
+            height: 200px;
+            display: block;
+          }
+
+          .ticket-number {
+            font-size: 1.2em;
             font-weight: 700;
-            color: var(--color-dark);
-            margin: 0;
-            letter-spacing: 1px;
-          }
-
-          /* Sous-titre */
-          .ticket-subtitle {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1rem;
             color: var(--color-gold);
-            font-weight: 700;
-            margin: 0.5rem 0 0;
-            text-transform: uppercase;
             letter-spacing: 2px;
+            margin: 10px 0 5px;
           }
 
-          /* Corps du billet */
-          .ticket-body {
-            display: grid;
-            grid-template-columns: 1fr; /* Une colonne sur mobile */
-            gap: 1.2rem;
-          }
-
-          /* Section des informations */
-          .info-section {
-            background: rgba(197, 164, 126, 0.08);
-            border-radius: 12px;
-            padding: 1rem;
-            border: 1px solid rgba(197, 164, 126, 0.2);
-          }
-
-          .info-label {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.75rem;
-            color: var(--color-gold);
-            font-weight: 700;
+          .section-label {
+            font-size: 0.8em;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.25rem;
-          }
-
-          .info-value {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1rem;
-            color: var(--color-dark);
-            font-weight: 700;
+            color: #888;
             margin: 0;
           }
 
-          /* Section du QR Code */
-          .qr-section {
-            text-align: center;
-            padding: 1rem;
-          }
-
-          .qr-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.875rem;
-            color: var(--color-gold);
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-          }
-
-          .qr-code-container {
-            background: white;
-            padding: 0.75rem;
-            border-radius: 12px;
-            display: inline-block;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid var(--color-accent);
-          }
-
-          /* Pied de page */
-          .ticket-footer {
-            text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 2px dashed var(--color-gold);
-          }
-
-          .ticket-id {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.75rem;
-            color: #666;
-            font-weight: 400;
-            margin: 0;
-            letter-spacing: 1px;
-          }
-
-          /* Adaptation Desktop */
-          @media (min-width: 768px) {
+          /* ------------------- MEDIA QUERY : Version Ordinateur (Optionnel) ------------------- */
+          @media (min-width: 700px) {
             .access-ticket {
-              width: 90%; /* Un peu plus large sur desktop */
-              max-width: 500px; /* Largeur maximale plus grande */
-              padding: 2rem;
-            }
-
-            .ticket-title {
-              font-size: 2.2rem;
-            }
-
-            .ticket-body {
-              grid-template-columns: 1fr 1fr; /* Deux colonnes sur desktop */
+              flex-direction: row; /* Repasse en côte-à-côte */
+              max-width: 800px; /* Reprend la largeur horizontale */
+              width: 90%;
             }
 
             .info-section {
-              padding: 1.25rem;
+              flex-grow: 1;
+              text-align: left; /* Réaligne le texte à gauche */
+              padding: 30px 40px;
+            }
+            
+            .ticket-details {
+              flex-direction: row; /* Repasse en ligne */
+              flex-wrap: wrap;
+              text-align: left;
             }
 
-            .qr-section {
-              grid-column: span 2; /* QR code sur toute la largeur */
+            .detail-item {
+              min-width: 45%; 
+              text-align: left;
+              border-bottom: none;
             }
-          }
 
-          /* Adaptation très grands écrans */
-          @media (min-width: 1200px) {
-            .access-ticket {
-              max-width: 550px;
-              padding: 2.5rem;
+            .scan-section {
+              order: initial; /* Retour à l'ordre normal (à droite) */
+              width: 250px; /* Largeur fixe à droite */
+              min-height: 400px;
+              justify-content: space-around; /* Mieux réparti */
+              padding: 40px 20px;
+            }
+
+            .qr-code-img {
+              width: 150px; /* Réduit un peu la taille sur desktop */
+              height: 150px;
+            }
+
+            /* Ligne de perforation verticale */
+            .perforation-line {
+              width: 15px; 
+              height: auto;
+              border-left: 2px dashed #ccc;
+              border-top: none; 
+            }
+
+            .perforation-line::before,
+            .perforation-line::after {
+              left: -17px;
+              top: -15px;
+              transform: none;
+            }
+
+            .perforation-line::after {
+              top: auto;
+              bottom: -15px;
+              left: -17px;
+              right: auto;
             }
           }
         `
       }} />
-
-      {/* En-tête du billet */}
-      <div className="ticket-header">
-        <h1 className="ticket-title">ACCÈS VIP</h1>
-        <p className="ticket-subtitle">Événement exclusif</p>
-      </div>
-
-      {/* Corps du billet */}
-      <div className="ticket-body">
-        {/* Informations de l'événement */}
-        <div className="info-section">
-          <p className="info-label">Événement</p>
-          <p className="info-value">{ticket.eventname}</p>
-        </div>
-
-        <div className="info-section">
-          <p className="info-label">Participant</p>
-          <p className="info-value">{ticket.participantname}</p>
-        </div>
-
-        <div className="info-section">
-          <p className="info-label">Date</p>
-          <p className="info-value">{ticket.date}</p>
-        </div>
-
-        <div className="info-section">
-          <p className="info-label">Heure</p>
-          <p className="info-value">{ticket.time}</p>
-        </div>
-
-        <div className="info-section">
-          <p className="info-label">Lieu</p>
-          <p className="info-value">{ticket.address}</p>
-        </div>
-
-        {/* QR Code */}
-        <div className="qr-section">
-          <p className="qr-title">Code d'accès unique</p>
-          <div className="qr-code-container">
-            {qrDataUrl ? (
-              <img 
-                src={qrDataUrl} 
-                alt="QR Code du billet" 
-                className="w-32 h-32 md:w-40 md:h-40 object-contain"
-              />
-            ) : (
-              <div className="w-32 h-32 md:w-40 md:h-40 bg-gray-200 rounded flex items-center justify-center">
-                <span className="text-gray-500 text-xs">Chargement...</span>
-              </div>
-            )}
+      
+      <div className="info-section">
+        <h2 className="ticket-header">BILLET D&apos;ACCÈS</h2>
+        <h1 className="event-title">{ticket.eventname}</h1>
+        
+        <div className="ticket-details">
+          <div className="detail-item">
+            <span className="label">INVITÉ(E)</span>
+            <p className="value">{ticket.participantname}</p>
+          </div>
+          <div className="detail-item">
+            <span className="label">DATE & HEURE</span>
+            <p className="value">
+              {new Date(ticket.date).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+              }).toUpperCase()} - {ticket.time}
+            </p>
+          </div>
+          <div className="detail-item">
+            <span className="label">LIEU</span>
+            <p className="value">{ticket.address}</p>
           </div>
         </div>
+        
+        <p className="instructions">
+          Présentez ce billet (papier ou mobile) à l&apos;entrée.
+        </p>
       </div>
 
-      {/* Pied de page */}
-      <div className="ticket-footer">
-        <p className="ticket-id">ID: {ticket.id}</p>
+      <div className="perforation-line"></div>
+
+      <div className="scan-section">
+        <div className="qr-container">
+          {qrDataUrl ? (
+            <img 
+              src={qrDataUrl} 
+              alt="Code QR d'accès" 
+              className="qr-code-img"
+            />
+          ) : (
+            <div className="w-48 h-48 bg-gray-200 rounded flex items-center justify-center">
+              <span className="text-gray-500">QR Code</span>
+            </div>
+          )}
+        </div>
+        
+        <p className="ticket-number">N° Billet : {ticket.id.substring(0, 16)}...</p>
+        <p className="section-label">Scan à l&apos;entrée</p>
       </div>
     </div>
   );
 }
 
-export default function TicketPage({ params }: { params: { id: string } }) {
+export default function ShortTicketPage() {
+  const { id } = useParams();
+  const { t } = useLanguage();
   const [ticket, setTicket] = useState<Ticket | null>(null);
-  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchTicket = async () => {
       try {
-        const fetchedTicket = await getTicketById(params.id);
-        if (!fetchedTicket) {
-          notFound();
-          return;
+        if (typeof id !== 'string') {
+          throw new Error("ID de billet invalide");
         }
+        
+        const fetchedTicket = await getTicketById(id);
         setTicket(fetchedTicket);
+        
+        // Générer le QR code
+        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(id)}`;
+        setQrDataUrl(qrCodeUrl);
       } catch (err) {
-        console.error('Erreur lors du chargement du billet:', err);
-        setError('Impossible de charger le billet');
-        notFound();
+        setError(err instanceof Error ? err.message : "Erreur lors du chargement du billet");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTicket();
-  }, [params.id]);
-
-  // Effet pour générer le QR Code et convertir en data URL
-  useEffect(() => {
-    if (ticket && typeof window !== 'undefined') {
-      import('qrcode').then((QRCode) => {
-        // Créer un canvas temporaire pour générer le QR code
-        const canvas = document.createElement('canvas');
-        
-        // Générer le QR code
-        QRCode.default.toCanvas(canvas, ticket.qrcode, {
-          width: 200,
-          margin: 1,
-          color: {
-            dark: '#3d3b37',
-            light: '#f9f6e5'
-          }
-        }, (error: Error | null | undefined) => {
-          if (error) {
-            console.error('Erreur lors de la génération du QR Code:', error);
-          } else {
-            // Convertir en data URL
-            const dataUrl = canvas.toDataURL('image/png');
-            setQrDataUrl(dataUrl);
-          }
-        });
-      });
+    if (id) {
+      fetchTicket();
     }
-  }, [ticket]);
-
-  const shareTicket = async () => {
-    if (ticket) {
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: `Billet pour ${ticket.eventname}`,
-            text: `Voici votre billet pour l'événement ${ticket.eventname}`,
-            url: `https://ticket2-phi.vercel.app/t/${ticket.id}`,
-          });
-        } catch (err) {
-          console.log("Partage annulé ou non supporté");
-        }
-      } else {
-        // Copier le lien dans le presse-papiers
-        try {
-          await navigator.clipboard.writeText(`https://ticket2-phi.vercel.app/t/${ticket.id}`);
-          alert("Lien copié dans le presse-papiers !");
-        } catch (err) {
-          console.error("Erreur lors de la copie du lien :", err);
-        }
-      }
-    }
-  };
+  }, [id]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Chargement de votre billet...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Chargement du billet...</p>
         </div>
       </div>
     );
@@ -346,20 +336,44 @@ export default function TicketPage({ params }: { params: { id: string } }) {
 
   if (error || !ticket) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50 flex items-center justify-center p-4">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Billet non trouvé</h1>
-          <p className="text-gray-600 mb-6">Le billet que vous recherchez n'existe pas ou n'est plus valide.</p>
-          <a 
-            href="/" 
-            className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-medium transition-all"
-          >
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50 flex items-center justify-center">
+        <div className="text-center p-6 bg-white rounded-xl shadow-lg max-w-md">
+          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Billet non trouvé</h2>
+          <p className="text-gray-600 mb-6">Le billet que vous recherchez n'existe pas ou n'est plus disponible.</p>
+          <Link href="/" className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors">
             Retour à l'accueil
-          </a>
+          </Link>
         </div>
       </div>
     );
   }
+
+  const shareTicket = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Billet pour ${ticket.eventname}`,
+          text: `Voici votre billet pour l'événement ${ticket.eventname}`,
+          url: `https://ticket2-phi.vercel.app/t/${ticket.id}`,
+        });
+      } catch (err) {
+        console.log("Partage annulé ou non supporté");
+      }
+    } else {
+      // Copier le lien dans le presse-papiers
+      try {
+        await navigator.clipboard.writeText(`https://ticket2-phi.vercel.app/t/${ticket.id}`);
+        alert("Lien copié dans le presse-papiers !");
+      } catch (err) {
+        console.error("Erreur lors de la copie du lien :", err);
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50 flex items-center justify-center p-4">
