@@ -494,16 +494,4 @@ export default function ScanPage() {
       </div>
     </main>
   )
-}           </div>
-          </div>
-        )}
-      </div>
-    </main>
-  )
-}           </div>
-          </div>
-        )}
-      </div>
-    </main>
-  )
 }
