@@ -16,6 +16,21 @@ Your project is live at:
 
 **[https://vercel.com/mandem050604-7255s-projects/v0-event-ticket-app](https://vercel.com/mandem050604-7255s-projects/v0-event-ticket-app)**
 
+## Configuration requise
+
+Pour que l'application fonctionne correctement, vous devez configurer les variables d'environnement suivantes :
+
+1. Créez un fichier `.env.local` à la racine du projet
+2. Copiez le contenu du fichier `.env.example` dans `.env.local`
+3. Remplissez les valeurs avec vos propres informations Supabase
+
+### Variables d'environnement
+
+- `NEXT_PUBLIC_SUPABASE_URL` : URL de votre projet Supabase
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` : Clé anonyme de votre projet Supabase
+
+Sans ces variables, les fonctionnalités de base de données seront désactivées.
+
 ## Build your app
 
 Continue building your app on:

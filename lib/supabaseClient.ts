@@ -4,4 +4,11 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Vérifier que les variables d'environnement sont définies
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.warn('Supabase URL and/or anon key not configured. Database features will not work.')
+}
+
+export const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null

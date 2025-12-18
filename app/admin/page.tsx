@@ -44,7 +44,13 @@ export default function AdminPage() {
       }
       setLoading(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors du chargement des billets")
+      const errorMessage = err instanceof Error ? err.message : "Erreur lors du chargement des billets"
+      // Vérifier si l'erreur est liée à la configuration de Supabase
+      if (errorMessage.includes('Supabase is not configured')) {
+        setError("La base de données n'est pas configurée. Veuillez configurer les variables d'environnement NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY.")
+      } else {
+        setError(errorMessage)
+      }
       setLoading(false)
     }
   }

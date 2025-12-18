@@ -161,6 +161,8 @@ export default function ScanPage() {
       });
     } catch (err) {
       console.error("Scan error:", err);
+      const errorMessage = err instanceof Error ? err.message : "Erreur lors du scan";
+      
       // Jouer le son d'erreur
       if (errorSoundRef.current) {
         try {
@@ -169,10 +171,19 @@ export default function ScanPage() {
           console.warn("Erreur lors de la lecture du son d'erreur:", err);
         }
       }
-      setResult({
-        type: "error",
-        message: t("scan.invalidQRCode")
-      });
+      
+      // Vérifier si l'erreur est liée à la configuration de Supabase
+      if (errorMessage.includes('Supabase is not configured')) {
+        setResult({
+          type: "error",
+          message: "La base de données n'est pas configurée. Veuillez configurer les variables d'environnement NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY."
+        });
+      } else {
+        setResult({
+          type: "error",
+          message: t("scan.invalidQRCode")
+        });
+      }
     }
   };
 

@@ -15,6 +15,11 @@ export interface Ticket {
 
 // Créer un nouveau billet
 export async function createTicket(ticketData: Omit<Ticket, 'id' | 'createdat' | 'status' | 'deleted'>) {
+  // Vérifier que supabase est configuré
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.')
+  }
+  
   // Générer un ID aléatoire sécurisé
   const randomId = crypto.randomUUID ? crypto.randomUUID() : 
     'ticket-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
@@ -45,6 +50,11 @@ export async function createTicket(ticketData: Omit<Ticket, 'id' | 'createdat' |
 
 // Obtenir tous les billets (non supprimés)
 export async function getAllTickets() {
+  // Vérifier que supabase est configuré
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.')
+  }
+  
   const { data, error } = await supabase
     .from('tickets')
     .select('*')
@@ -60,6 +70,11 @@ export async function getAllTickets() {
 
 // Obtenir les billets supprimés (dans la corbeille)
 export async function getDeletedTickets() {
+  // Vérifier que supabase est configuré
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.')
+  }
+  
   const { data, error } = await supabase
     .from('tickets')
     .select('*')
@@ -75,6 +90,11 @@ export async function getDeletedTickets() {
 
 // Mettre à jour le statut d'un billet
 export async function updateTicketStatus(ticketId: string, status: 'valid' | 'used') {
+  // Vérifier que supabase est configuré
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.')
+  }
+  
   const { data, error } = await supabase
     .from('tickets')
     .update({ status })
@@ -90,6 +110,11 @@ export async function updateTicketStatus(ticketId: string, status: 'valid' | 'us
 
 // Marquer un billet comme supprimé (mettre dans la corbeille)
 export async function deleteTicket(ticketId: string) {
+  // Vérifier que supabase est configuré
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.')
+  }
+  
   const { data, error } = await supabase
     .from('tickets')
     .update({ deleted: true })
@@ -105,6 +130,11 @@ export async function deleteTicket(ticketId: string) {
 
 // Restaurer un billet depuis la corbeille
 export async function restoreTicket(ticketId: string) {
+  // Vérifier que supabase est configuré
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.')
+  }
+  
   const { data, error } = await supabase
     .from('tickets')
     .update({ deleted: false })
@@ -120,6 +150,11 @@ export async function restoreTicket(ticketId: string) {
 
 // Supprimer définitivement un billet
 export async function permanentlyDeleteTicket(ticketId: string) {
+  // Vérifier que supabase est configuré
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.')
+  }
+  
   const { data, error } = await supabase
     .from('tickets')
     .delete()
@@ -134,6 +169,11 @@ export async function permanentlyDeleteTicket(ticketId: string) {
 
 // Obtenir un billet par son ID
 export async function getTicketById(ticketId: string) {
+  // Vérifier que supabase est configuré
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.')
+  }
+  
   console.log("Recherche du billet avec ID:", ticketId);
   
   const { data, error } = await supabase
