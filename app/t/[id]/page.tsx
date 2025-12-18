@@ -1,5 +1,7 @@
 "use client";
 
+// Force redeployment - update 1
+
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { getTicketById, Ticket } from "@/lib/ticketService";
@@ -306,6 +308,11 @@ export default function ShortTicketPage() {
           throw new Error("ID de billet invalide");
         }
         
+        // Vérifier si supabase est configuré
+        console.log("Vérification de la configuration Supabase...");
+        const { supabase } = await import('@/lib/supabaseClient');
+        console.log("Supabase configuré:", !!supabase);
+        
         const fetchedTicket = await getTicketById(id);
         console.log("Billet récupéré:", fetchedTicket);
         setTicket(fetchedTicket);
@@ -364,7 +371,7 @@ export default function ShortTicketPage() {
         await navigator.share({
           title: `Billet pour ${ticket.eventname}`,
           text: `Voici votre billet pour l'événement ${ticket.eventname}`,
-          url: `https://ticket2-phi.vercel.app/t/${ticket.id}`,
+          url: `https://ticket2-qi4z.vercel.app/t/${ticket.id}`,
         });
       } catch (err) {
         console.log("Partage annulé ou non supporté");

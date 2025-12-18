@@ -617,14 +617,14 @@ export default function CreateTicketPage() {
                     <p className="font-bold text-gray-900 mb-1">Lien de votre billet</p>
                     <p className="text-xs text-gray-600 mb-2">Partagez ce lien avec le participant</p>
                     <div className="bg-gray-100 p-2 rounded text-[10px] font-mono break-all">
-                      {typeof window !== 'undefined' && `https://ticket2-phi.vercel.app/t/${ticket.id}`}
+                      {typeof window !== 'undefined' && `https://ticket2-qi4z.vercel.app/t/${ticket.id}`}
                     </div>
                     <p className="text-xs text-gray-500 mt-2">Ce lien est unique et sécurisé</p>
                   </div>
                   <button 
                     onClick={() => {
                       if (typeof navigator !== 'undefined' && navigator.clipboard) {
-                        navigator.clipboard.writeText(`https://ticket2-phi.vercel.app/t/${ticket.id}`);
+                        navigator.clipboard.writeText(`https://ticket2-qi4z.vercel.app/t/${ticket.id}`);
                         alert("Lien copié dans le presse-papiers !");
                       }
                     }}
